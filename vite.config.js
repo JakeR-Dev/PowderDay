@@ -10,6 +10,6 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/powder-day/'
+  base: '/PowderDay/'
 })
 

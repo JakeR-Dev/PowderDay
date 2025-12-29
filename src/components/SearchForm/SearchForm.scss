@@ -1,0 +1,10 @@
+.search-form {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: stretch;
+  input {
+    margin-right: 8px;
+  }
+}

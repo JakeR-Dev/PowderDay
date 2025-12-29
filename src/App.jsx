@@ -1,20 +1,17 @@
 import { useState } from 'react'
-import './App.css'
+import { searchResorts, getResortSnowReport } from './Api.jsx'
+import SearchForm from './components/SearchForm/SearchForm'
+import SearchResults from './components/SearchResults/SearchResults'
+import './App.scss'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [results, setResults] = useState([]);
 
   return (
     <>
       <h1>PowderDay</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
+      <SearchForm searchResorts={searchResorts} setResults={setResults} />
+      <SearchResults results={results} />
     </>
   )
 }

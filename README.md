@@ -1,6 +1,6 @@
-# Grid Runner
+# PowderDay
 
-https://jaker-dev.github.io/powder-day/
+https://jaker-dev.github.io/PowderDay/
 
 Check for snow before you go
 

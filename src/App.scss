@@ -1,0 +1,28 @@
+@use './styles/variables';
+
+body {
+  background: var(--color-black);
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+input {
+  display: inline-block;
+  background: var(--color-black);
+  border: 1px solid var(--color-white);
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: var(--color-white);
+  box-sizing: border-box;
+}
+
+button {
+  background: var(--color-white);
+  color: var(--color-black);
+  border: 1px solid var(--color-gray);
+}
