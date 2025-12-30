@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { searchResorts, getResortSnowReport } from './Api.jsx'
+import { listResorts, getResortSnowReport } from './Api.jsx'
 import SearchForm from './components/SearchForm/SearchForm'
 import SearchResults from './components/SearchResults/SearchResults'
 import './App.scss'
@@ -10,8 +10,9 @@ function App() {
   return (
     <>
       <h1>PowderDay</h1>
-      <SearchForm searchResorts={searchResorts} setResults={setResults} />
-      <SearchResults results={results} />
+      <p>Check the snow before you go</p>
+      <SearchForm listResorts={listResorts} setResults={setResults} />
+      <SearchResults results={results} getResortSnowReport={getResortSnowReport} />
     </>
   )
 }

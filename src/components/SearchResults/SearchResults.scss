@@ -1,0 +1,33 @@
+.search-results {
+  ul {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 16px;
+    list-style: none;
+    li {
+      border: 1px solid var(--color-gray);
+      padding: 16px;
+      border-radius: 8px;
+    }
+    .the-goods {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      justify-content: flex-start;
+      align-items: stretch;
+      gap: 16px;
+      padding: 16px 0;
+      b {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .block {
+        grid-column: 1/-1;
+      }
+    }
+  }
+  h3 {
+    margin-top: 0;
+  }
+}
