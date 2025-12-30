@@ -10,7 +10,7 @@ export async function listResorts() {
   // };
 
   // SnoCountry API version
-  const url = 'http://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&states=co&output=json';
+  const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&states=co&output=json';
   const options = {
     method: 'GET'
   };
@@ -36,7 +36,7 @@ export async function getResortSnowReport(resortId) {
   // };
 
   // SnoCountry API version
-  const url = 'http://feeds.snocountry.net/getSnowReport.php?apiKey=SnoCountry.example&ids=' + resortId + '&output=json';
+  const url = 'https://feeds.snocountry.net/getSnowReport.php?apiKey=SnoCountry.example&ids=' + resortId + '&output=json';
   const options = {
     method: 'GET'
   };
