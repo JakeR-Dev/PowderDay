@@ -1,0 +1,31 @@
+button {
+  display: inline-block;
+  padding: 8px 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--color-black);
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
+  border-radius: 4px;
+  transition: all .12s linear;
+  &:not(:last-child) {
+    margin-right: 8px;
+  }
+  &:hover {
+    background: var(--color-white);
+    color: var(--color-black);
+    border-color: var(--color-white);
+  }
+}
+
+input {
+  display: inline-block;
+  background: var(--color-black);
+  border: 1px solid var(--color-white);
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: var(--color-white);
+  box-sizing: border-box;
+}

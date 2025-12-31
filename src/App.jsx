@@ -10,7 +10,7 @@ function App() {
   return (
     <>
       <h1>PowderDay</h1>
-      <p>Check the snow before you go</p>
+      <h2 className="subtitle">Check The Snow Before You Go</h2>
       <SearchForm listResorts={listResorts} setResults={setResults} />
       <SearchResults results={results} getResortSnowReport={getResortSnowReport} />
     </>

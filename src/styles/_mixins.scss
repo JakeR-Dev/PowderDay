@@ -1,0 +1,33 @@
+@use "variables";
+
+@mixin media($res) {
+	@if mobile==$res {
+		@media (min-width: variables.$mobile_width) {
+			@content;
+		}
+	}
+
+	@if tablet==$res {
+		@media (min-width: variables.$tablet_width) {
+			@content;
+		}
+	}
+
+	@if desktop==$res {
+		@media (min-width: variables.$desktop_width) {
+			@content;
+		}
+	}
+
+	@if wide==$res {
+		@media (min-width: variables.$wide_width) {
+			@content;
+		}
+	}
+
+	@if full_width==$res {
+		@media (min-width: variables.$full_width) {
+			@content;
+		}
+	}
+}

@@ -1,6 +1,20 @@
+$mobile_width: 640px;
+$tablet_width: 768px;
+$desktop_width: 1024px;
+$wide_width: 1280px;
+$full_width: 1536px;
+
 :root {
-  --color-black: #101010;
-  --color-dark-gray: #303030;
-  --color-gray: #666;
-  --color-white: #f3f3f3;
+  --font-heading: "Tsukimi Rounded", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --weight-heading: 400;
+  --weight-body: 400;
+  --color-black: #1E1E1E;
+  --color-gray: #A0A0A0;
+  --color-white: #FFFFFF;
+  --color-gold: #FFD166;
+  --color-snow: #4DA6FF;
+  --color-green: #06D6A0;
+  --color-red: #EF476F;
 }
+
