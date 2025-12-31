@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import './SearchForm.scss'
 
-export default function SearchForm({ listResorts, setResults }) {
+export default function SearchForm({ listResorts, setResults, setHasSearched }) {
   const [selectedState, setSelectedState] = useState("VT");
 
   const handleList = async (stateCode) => {
+    setHasSearched(true);
     const data = await listResorts(stateCode.toLowerCase());
     setResults(data || []);
   };

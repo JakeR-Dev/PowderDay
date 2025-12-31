@@ -6,6 +6,7 @@
     justify-content: flex-start;
     align-items: stretch;
     gap: 16px;
+    padding: 0;
     list-style: none;
     grid-template-columns: repeat(1, 1fr);
     @include mixins.media(desktop) {
@@ -14,35 +15,60 @@
     .resort {
       display: grid;
       align-items: flex-start;
-      grid-template-columns: 40px 2fr 3fr;
-      grid-template-areas:
-        "status left right"
-        "full full full";
       gap: 16px;
       border: 1px solid var(--color-gray);
       padding: 16px;
       border-radius: 8px;
-      &-left {
-
-      }
-      &-right {
-
+      grid-template-columns: 32px 2fr;
+      grid-template-areas:
+          "status left"
+          "right"
+          "full full full";
+      @include mixins.media(mobile) {
+        grid-template-columns: 40px 2fr 3fr;
+        grid-template-areas:
+          "status left right"
+          "full full full";
       }
     }
-    .resort-status {
+    .resort-right {
+      grid-column: 1 / -1;
+      @include mixins.media(mobile) {
+        grid-column: auto;
+      }
+    }
+    .resort-status, 
+    .send-score {
       display: block;
+    }
+    .resort-status {
       width: 10px;
       height: 10px;
       margin: 8px auto 16px;
-      font-size: 0;
       border-radius: 50%;
-    }
-    .send-status {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      vertical-align: middle;
       font-size: 0;
+    }
+    .send-score {
+      &.status-excellent {
+        &::after {
+          content: '🚀';
+        }
+      }
+      &.status-good {
+        &::after {
+          content: '👍';
+        }
+      }
+      &.status-fair {
+        &::after {
+          content: '🤷‍♂️';
+        }
+      }
+      &.status-poor {
+        &::after {
+          content: '👎';
+        }
+      }
     }
     .the-goods {
       display: grid;
