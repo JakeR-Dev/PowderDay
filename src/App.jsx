@@ -9,8 +9,8 @@ function App() {
 
   return (
     <>
-      <h1>PowderDay</h1>
-      <h2 className="subtitle">Check The Snow Before You Go</h2>
+      <h1>Powder Day</h1>
+      <h2 className="subtitle color-gray">Check The Snow Before You Go</h2>
       <SearchForm listResorts={listResorts} setResults={setResults} />
       <SearchResults results={results} getResortSnowReport={getResortSnowReport} />
     </>

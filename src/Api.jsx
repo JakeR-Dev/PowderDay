@@ -1,4 +1,4 @@
-export async function listResorts() {
+export async function listResorts(stateCode = 'vt') {
   // rapid API version
   // const url = 'https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort';
   // const options = {
@@ -10,7 +10,7 @@ export async function listResorts() {
   // };
 
   // SnoCountry API version
-  const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&states=co&output=json';
+  const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&resortType=alpine&states=' + stateCode + '&output=json';
   const options = {
     method: 'GET'
   };

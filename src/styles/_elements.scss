@@ -9,6 +9,7 @@ button {
   color: var(--color-white);
   border: 1px solid var(--color-white);
   border-radius: 4px;
+  font-size: .75rem;
   transition: all .12s linear;
   &:not(:last-child) {
     margin-right: 8px;
@@ -20,7 +21,19 @@ button {
   }
 }
 
-input {
+a.btn-simple, button.btn-simple {
+  padding: 0;
+  border: none;
+  font-size: .7rem;
+  color: var(--color-white);
+  &:hover {
+    text-decoration: underline;
+    background: none;
+    color: var(--color-whtie);
+  }
+}
+
+input, select {
   display: inline-block;
   background: var(--color-black);
   border: 1px solid var(--color-white);
@@ -28,4 +41,10 @@ input {
   padding: 8px 16px;
   color: var(--color-white);
   box-sizing: border-box;
+  &:not(:last-child) {
+    margin-right: 8px;
+  }
+}
+select {
+  padding-left: 12px;
 }
