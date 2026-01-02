@@ -46,7 +46,7 @@ export default function SearchForm({ listResorts, setResults, setHasSearched }) 
           <option value="SK">Saskatchewan</option>
         </optgroup>
       </select>
-      <button onClick={() => handleList(selectedState)}>Search</button>
+      <button onClick={() => handleList(selectedState)}>Search by State</button>
     </div>
   )
 }

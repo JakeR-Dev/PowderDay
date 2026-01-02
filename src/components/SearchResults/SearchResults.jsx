@@ -75,15 +75,17 @@ export default function SearchResults({ results, getResortSnowReport, hasSearche
   };
 
   // helper to get send score
-  const getSendScore = (resortName, status, freshies, stash, surface) => {
+  const getSendScore = (status, freshies, stash, surface) => {
     if (status === "1" && freshies + stash >= 12 && (surface === 'Powder' || surface === 'Packed Powder')) {
-      return 'status-excellent';
+      return 'pow';
+    } else if (status === "1" && freshies + stash >= 9 && (surface === 'Powder' || surface === 'Packed Powder' || surface === 'Machine Groomed')) {
+      return 'great';
     } else if (status === "1" && freshies + stash >= 6 && (surface === 'Powder' || surface === 'Packed Powder' || surface === 'Machine Groomed')) {
-      return 'status-good';
+      return 'good';
     } else if (status === "1" && freshies + stash >= 1) {
-      return 'status-fair';
+      return 'fair';
     } else {
-      return 'status-poor';
+      return 'poor';
     }
   }
 
@@ -105,14 +107,14 @@ export default function SearchResults({ results, getResortSnowReport, hasSearche
             const freshies = data?.minLast24Hours + data?.maxLast24Hours / 2;
             const stash = data?.snowLast48Hours;
             const surface = data?.primarySurfaceCondition || 'N/A';
-            const sendScoreClass = getSendScore(resortName, status, freshies, stash, surface);
+            const sendScore = getSendScore(status, freshies, stash, surface);
 
             return (
               <li key={resort.id} className="resort">
                 {/* resort status */}
                 <span className="resort-left text-center">
                   <span className={`resort-status ${statusClass}`}>Resort Status = {status}</span>
-                  <span className={`send-score ${sendScoreClass}`}></span>
+                  <span className="send-score">{sendScore}</span>
                 </span>
                 {/* resort name */}
                 <span className="resort-middle text-left">

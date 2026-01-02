@@ -1,16 +1,21 @@
 @use './styles/variables';
 @use './styles/typography';
+@use './styles/mixins';
 @use './styles/utilities';
 @use './styles/elements';
 
 body {
   background: var(--color-black);
   color: var(--color-white);
+  margin: 0;
 }
 
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+  padding: 2rem 1rem;
+  @include mixins.media(mobile) {
+    padding: 2rem;
+  }
 }
