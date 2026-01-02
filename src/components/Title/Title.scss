@@ -1,0 +1,29 @@
+svg {
+  margin-bottom: 16px;
+  g {
+    display: inline-block;
+    transform: translateY(-30px);
+    opacity: 1;
+    will-change: transform, opacity;
+    &#flake-1 {
+      animation: snow 2s linear infinite;
+    }
+    &#flake-2 {
+      animation: snow 2s linear .25s infinite;
+    }
+    &#flake-3 {
+      animation: snow 2s linear .5s infinite;
+    }
+  }
+}
+
+@keyframes snow {
+  from {
+    transform: translateY(-40px);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}

@@ -94,7 +94,7 @@ export default function SearchResults({ results, getResortSnowReport, hasSearche
       {results.length === 0 && hasSearched ? (
         <p>No results found. Please try something else.</p>
       ) : results.length === 0 ? (
-        null
+        <h5>Choose a state to get started.</h5>
       ) : (
         <ul>
           {results.items.map((resort) => {

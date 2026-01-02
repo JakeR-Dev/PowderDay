@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { listResorts, getResortSnowReport } from './Api.jsx'
+import Title from './components/Title/Title.jsx'
 import SearchForm from './components/SearchForm/SearchForm'
 import SearchResults from './components/SearchResults/SearchResults'
+import Footer from './components/Footer/Footer.jsx'
 import './App.scss'
 
 function App() {
@@ -10,10 +12,10 @@ function App() {
 
   return (
     <>
-      <h1>Powder Day</h1>
-      <h2 className="subtitle color-gray">Check The Snow Before You Go</h2>
+      <Title />
       <SearchForm listResorts={listResorts} setResults={setResults} setHasSearched={setHasSearched} />
       <SearchResults results={results} getResortSnowReport={getResortSnowReport} hasSearched={hasSearched} />
+      <Footer />
     </>
   )
 }
