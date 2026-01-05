@@ -37,13 +37,9 @@ export default function SearchForm({ listResorts, setResults, setHasSearched }) 
         <optgroup label="Canada">
           <option value="AB">Alberta</option>
           <option value="BC">British Columbia</option>
-          <option value="LB">Labrador</option>
-          <option value="MB">Manitoba</option>
-          <option value="NF">Newfoundland</option>
           <option value="NS">Nova Scotia</option>
           <option value="ON">Ontario</option>
           <option value="QC">Quebec</option>
-          <option value="SK">Saskatchewan</option>
         </optgroup>
       </select>
       <button onClick={() => handleList(selectedState)}>Search by State</button>
