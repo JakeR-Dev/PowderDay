@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
+import getSendScore from '../../utils/getSendScore.jsx'
+import getResortInfo from '../../utils/getResortInfo.jsx'
+import getStatusClass from '../../utils/getStatusClass.jsx'
 import './SearchResults.scss'
 
-export default function SearchResults({ results, getResortSnowReport, hasSearched }) {
+export default function SearchResults({ results, hasSearched }) {
   const [expandedResortId, setExpandedResortId] = useState(null);
   const [resortData, setResortData] = useState({});
 
@@ -24,70 +27,7 @@ export default function SearchResults({ results, getResortSnowReport, hasSearche
     };
 
     fetchAllResortData();
-  }, [results, getResortSnowReport]);
-
-  // grab a single resort info
-  const getResortInfo = async (resortID) => {
-    const data = await getResortSnowReport(resortID);
-    const resortInfo = data.items[0];
-    // console.log(resortInfo);
-
-    // format the date
-    let reportDate = new Date(resortInfo?.reportDateTime);
-    const options = {
-      month: "2-digit",
-      day: "2-digit",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    };
-    reportDate = new Intl.DateTimeFormat("en-US", options).format(reportDate);
-    reportDate = reportDate.replace(',', ' @');
-
-    return {
-      name: resortInfo?.resortName || 'N/A',
-      location: resortInfo?.state + ', ' + resortInfo?.country || '',
-      resortStatus: resortInfo?.resortStatus || '7',
-      operatingStatus: resortInfo?.operatingStatus || '',
-      minLast24Hours: Number(resortInfo?.newSnowMin) || 0,
-      maxLast24Hours: Number(resortInfo?.newSnowMax) || 0,
-      baseDepthMin: Number(resortInfo?.avgBaseDepthMin) || 0,
-      baseDepthMax: Number(resortInfo?.avgBaseDepthMax) || 0,
-      primarySurfaceCondition: resortInfo?.primarySurfaceCondition || 'N/A',
-      openDownHillPercent: resortInfo?.openDownHillPercent !== '' ? resortInfo?.openDownHillPercent : '0',
-      openDownHillLifts: resortInfo?.openDownHillLifts || '0',
-      maxDownHillLifts: resortInfo?.maxOpenDownHillLifts || 'N/A',
-      reportDateTime: reportDate || 'N/A',
-      comments: resortInfo?.snowComments || 'N/A',
-      trailMapUrl: resortInfo?.lgTrailMapURL || '',
-      snowLast48Hours: Number(resortInfo?.snowLast48Hours) || 0,
-      weekdayHours: resortInfo?.weekdayHours || 'N/A',
-      weekendHours: resortInfo?.weekendHours || 'N/A',
-    };
-  };
-
-  // helper to get status class
-  const getStatusClass = (status) => {
-    if (status === "1") return 'status-open bg-green';
-    if (status === "3" || status === "4") return 'status-warning bg-gold';
-    return 'status-closed bg-red';
-  };
-
-  // helper to get send score
-  const getSendScore = (status, freshies, stash, surface) => {
-    if (status === "1" && freshies + stash >= 12 && (surface === 'Powder' || surface === 'Packed Powder')) {
-      return 'pow';
-    } else if (status === "1" && freshies + stash >= 9 && (surface === 'Powder' || surface === 'Packed Powder' || surface === 'Machine Groomed')) {
-      return 'great';
-    } else if (status === "1" && freshies + stash >= 6 && (surface === 'Powder' || surface === 'Packed Powder' || surface === 'Machine Groomed')) {
-      return 'good';
-    } else if (status === "1" && freshies + stash >= 1) {
-      return 'fair';
-    } else {
-      return 'poor';
-    }
-  }
+  }, [results]);
 
   return (
     <div className="search-results">

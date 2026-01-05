@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { listResorts, getResortSnowReport } from './Api.jsx'
+import { listResorts } from './Api.jsx'
 import Title from './components/Title/Title.jsx'
 import SearchForm from './components/SearchForm/SearchForm'
 import SearchResults from './components/SearchResults/SearchResults'
@@ -14,7 +14,7 @@ function App() {
     <>
       <Title />
       <SearchForm listResorts={listResorts} setResults={setResults} setHasSearched={setHasSearched} />
-      <SearchResults results={results} getResortSnowReport={getResortSnowReport} hasSearched={hasSearched} />
+      <SearchResults results={results} hasSearched={hasSearched} />
       <Footer />
     </>
   )
