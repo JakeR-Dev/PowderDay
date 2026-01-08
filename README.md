@@ -19,3 +19,7 @@ Built with:
 - From project root, run `npm run deploy`
 
 This builds assets and deploys them to the `gh-pages` branch. The Github Pages site is set to deploy specifically from that `gh-pages` branch.
+
+## API
+
+Resort info courtesy of the SnoCountry API: https://feeds.snocountry.net/
