@@ -17,7 +17,7 @@ export async function listResorts(stateCode = 'vt') {
 }
 
 // search resorts by name
-export async function listAllResorts(resortQuery) {
+export async function listAllResorts() {
   // get all the states and provinces, join them into a comma-separated list to be used in fetch
   const allStates = [...usStates, ...canadaProvinces].map(s => s.value.toLowerCase()).join(',');
   const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&states=' + allStates + '&output=json';

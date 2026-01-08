@@ -4,17 +4,15 @@ import getResortInfo from '../../utils/getResortInfo'
 import getStatusClass from '../../utils/getStatusClass'
 import './SearchResults.scss'
 
-export default function SearchResults({ results, hasSearched }) {
+export default function SearchResults({ loading, setLoading, results, hasSearched, setHasSearched }) {
   const [expandedResortId, setExpandedResortId] = useState(null);
   const [resortData, setResortData] = useState({});
-  const [loading, setLoading] = useState(false);
 
   // fetch all resort data when results change
   useEffect(() => {
     const fetchAllResortData = async () => {
       if (results.length === 0) return;
 
-      setLoading(true);
       const dataPromises = results.items.map(async (resort) => {
         const info = await getResortInfo(resort.id);
         return { id: resort.id, ...info };
@@ -25,13 +23,14 @@ export default function SearchResults({ results, hasSearched }) {
       allData.forEach((data) => {
         dataMap[data.id] = data;
       });
+      setHasSearched(true);
       setLoading(false);
       setResortData(dataMap);
     };
 
     fetchAllResortData();
   }, [results]);
-
+  
   return (
     <div className="search-results">
       {/* loading spinner */}
@@ -42,15 +41,17 @@ export default function SearchResults({ results, hasSearched }) {
           <div className="loader-two" aria-hidden></div>
         </div>
       // if no results after search
-      ) : results.length === 0 && hasSearched ? (
+      ) : (results.length === 0 || !results.items || results.items.length === 0) && hasSearched ? (
         <p>No results found, try something else.</p>
       // if haven't searched yet
       ) : results.length === 0 ? (
-        ""
+        <p></p>
       // otherwise, show results
       ) : (
         <ul>
+          {/* loop through results */}
           {results.items.map((resort) => {
+            // use the resort ID to reference the array item for the resort
             const data = resortData[resort.id];
             // console.log(data);
             const resortName = data?.name;

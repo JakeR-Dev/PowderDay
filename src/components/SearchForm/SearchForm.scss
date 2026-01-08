@@ -1,15 +1,37 @@
+@use '../../styles/mixins';
+
 .search-form {
   display: flex;
-  flex-flow: row nowrap;
   justify-content: center;
   align-items: stretch;
-  margin-bottom: 2rem;
   margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  flex-flow: row wrap;
+  @include mixins.media(desktop) {
+    flex-flow: row nowrap;
+  }
+  &-group {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: .75rem;
+    flex: 0 0 100%;
+    @include mixins.media(tablet) {
+      flex: revert;
+    }
+  }
   input, select {
     width: 150px;
   }
   input {
     margin-right: 8px;
+  }
+  button {
+    min-width: 140px;
+    @include mixins.media(tablet) {
+      min-width: auto;
+    }
   }
   h6 {
     display: flex;

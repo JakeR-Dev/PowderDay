@@ -8,12 +8,13 @@ import './App.scss'
 function App() {
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
       <Title />
-      <SearchForm setResults={setResults} setHasSearched={setHasSearched} />
-      <SearchResults results={results} hasSearched={hasSearched} />
+      <SearchForm setLoading={setLoading} setResults={setResults} />
+      <SearchResults loading={loading} setLoading={setLoading} results={results} hasSearched={hasSearched} setHasSearched={setHasSearched} />
       <Footer />
     </>
   )
