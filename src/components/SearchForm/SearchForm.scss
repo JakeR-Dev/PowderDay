@@ -5,7 +5,16 @@
   align-items: stretch;
   margin-bottom: 2rem;
   margin-top: 2rem;
+  input, select {
+    width: 150px;
+  }
   input {
     margin-right: 8px;
+  }
+  h6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 16px;
   }
 }

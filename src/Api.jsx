@@ -1,15 +1,7 @@
-export async function listResorts(stateCode = 'vt') {
-  // rapid API version
-  // const url = 'https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort';
-  // const options = {
-  //   method: 'GET',
-  //   headers: {
-  //     'x-rapidapi-key': 'f90f2d45ecmshc00f319866e548fp1ee5afjsnc909d6c28584',
-  //     'x-rapidapi-host': 'ski-resorts-and-conditions.p.rapidapi.com'
-  //   }
-  // };
+import { usStates, canadaProvinces } from './data/statesList'
 
-  // SnoCountry API version
+// list resorts by state
+export async function listResorts(stateCode = 'vt') {
   const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&resortType=alpine&states=' + stateCode + '&output=json';
   const options = {
     method: 'GET'
@@ -24,18 +16,26 @@ export async function listResorts(stateCode = 'vt') {
   }
 }
 
-export async function getResortSnowReport(resortId) {
-  // rapid API version
-  // const url = `https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${resortId}`;
-  // const options = {
-  //   method: 'GET',
-  //   headers: {
-  //     'x-rapidapi-key': 'f90f2d45ecmshc00f319866e548fp1ee5afjsnc909d6c28584',
-  //     'x-rapidapi-host': 'ski-resorts-and-conditions.p.rapidapi.com'
-  //   }
-  // };
+// search resorts by name
+export async function listAllResorts(resortQuery) {
+  // get all the states and provinces, join them into a comma-separated list to be used in fetch
+  const allStates = [...usStates, ...canadaProvinces].map(s => s.value.toLowerCase()).join(',');
+  const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&states=' + allStates + '&output=json';
+  const options = {
+    method: 'GET'
+  };
 
-  // SnoCountry API version
+  try {
+    const response = await fetch(url, options);
+    const result = await response.text();
+    return JSON.parse(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// get single resort snow report
+export async function getResortSnowReport(resortId) {
   const url = 'https://feeds.snocountry.net/getSnowReport.php?apiKey=SnoCountry.example&ids=' + resortId + '&output=json';
   const options = {
     method: 'GET'

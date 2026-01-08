@@ -11,9 +11,6 @@ button {
   border-radius: 4px;
   font-size: .75rem;
   transition: all .12s linear;
-  &:not(:last-child) {
-    margin-right: 8px;
-  }
   &:hover {
     background: var(--color-white);
     color: var(--color-black);
@@ -38,13 +35,69 @@ input, select {
   background: var(--color-black);
   border: 1px solid var(--color-white);
   border-radius: 4px;
-  padding: 8px 16px;
   color: var(--color-white);
   box-sizing: border-box;
   &:not(:last-child) {
     margin-right: 8px;
   }
 }
+input {
+  padding: 8px 16px;
+}
 select {
-  padding-left: 12px;
+  padding: 8px 32px 8px 12px;
+  appearance: none;
+  background: {
+    image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+    repeat: no-repeat;
+    position: right 10px center;
+    size: 12px auto;
+  }
+}
+
+@keyframes loader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  position: relative;
+  height: 44px;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  &-one, &-two {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    &::after {
+      content: '';
+      display: block;
+      border-radius: 50%;
+      border: 2px solid var(--color-white);
+    }
+  }
+  &-one {
+    &::after {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      border-top-color: var(--color-black);
+      animation: loader reverse 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+  }
+  &-two {
+    &::after {
+      width: 40px;
+      height: 40px;
+      border-bottom-color: var(--color-black);
+      animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+  }
 }

@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react'
-import getSendScore from '../../utils/getSendScore.jsx'
-import getResortInfo from '../../utils/getResortInfo.jsx'
-import getStatusClass from '../../utils/getStatusClass.jsx'
+import getSendScore from '../../utils/getSendScore'
+import getResortInfo from '../../utils/getResortInfo'
+import getStatusClass from '../../utils/getStatusClass'
 import './SearchResults.scss'
 
 export default function SearchResults({ results, hasSearched }) {
   const [expandedResortId, setExpandedResortId] = useState(null);
   const [resortData, setResortData] = useState({});
+  const [loading, setLoading] = useState(false);
 
   // fetch all resort data when results change
   useEffect(() => {
     const fetchAllResortData = async () => {
       if (results.length === 0) return;
 
+      setLoading(true);
       const dataPromises = results.items.map(async (resort) => {
         const info = await getResortInfo(resort.id);
         return { id: resort.id, ...info };
@@ -23,6 +25,7 @@ export default function SearchResults({ results, hasSearched }) {
       allData.forEach((data) => {
         dataMap[data.id] = data;
       });
+      setLoading(false);
       setResortData(dataMap);
     };
 
@@ -31,10 +34,20 @@ export default function SearchResults({ results, hasSearched }) {
 
   return (
     <div className="search-results">
-      {results.length === 0 && hasSearched ? (
-        <p>No results found. Please try something else.</p>
+      {/* loading spinner */}
+      {loading ? (
+        <div className="loader">
+          <p className="sr-only">Loading resort data...</p>
+          <div className="loader-one" aria-hidden></div>
+          <div className="loader-two" aria-hidden></div>
+        </div>
+      // if no results after search
+      ) : results.length === 0 && hasSearched ? (
+        <p>No results found, try something else.</p>
+      // if haven't searched yet
       ) : results.length === 0 ? (
-        <h5>Choose a state to get started.</h5>
+        ""
+      // otherwise, show results
       ) : (
         <ul>
           {results.items.map((resort) => {

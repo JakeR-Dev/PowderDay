@@ -1,48 +1,58 @@
 import { useState } from 'react'
+import { listResorts, listAllResorts } from '../../Api'
+import { usStates, canadaProvinces } from '../../data/statesList'
+import inputSanitizer from '../../utils/inputSanitizer'
 import './SearchForm.scss'
 
-export default function SearchForm({ listResorts, setResults, setHasSearched }) {
+export default function SearchForm({ setResults, setHasSearched }) {
   const [selectedState, setSelectedState] = useState("VT");
+  const [resortQuery, setResortQuery] = useState("");
 
   const handleList = async (stateCode) => {
-    setHasSearched(true);
     const data = await listResorts(stateCode.toLowerCase());
+    setHasSearched(true);
     setResults(data || []);
   };
 
+  const handleSearch = async (resortQuery) => {
+    const data = await listAllResorts();
+    const sanitizedQuery = inputSanitizer(resortQuery).toLowerCase();
+    setHasSearched(true);
+
+    const filteredData = {
+      ...data,
+      items: data.items.filter(resort =>
+        resort.resortName.toLowerCase().includes(sanitizedQuery)
+      )
+    };
+    setResults(filteredData);
+  }
+
   return (
     <div className="search-form">
-      {/* <input type="text" placeholder="Search resort" value={query} onChange={(e) => setQuery(e.target.value)} /> */}
+      {/* resort search */}
+      <input type="text" placeholder="Resort Name" value={resortQuery} onChange={(e) => setResortQuery(e.target.value)} />
+      <button onClick={() => handleSearch(resortQuery)}>Search by Name</button>
+
+      <h6>OR</h6>
+
+      {/* state list */}
       <select name="state" id="state" value={selectedState} onChange={(e) => setSelectedState(e.target.value)}>
         {/* United States */}
         <optgroup label="United States">
-          <option value="AK">Alaska</option>
-          <option value="CA">California</option>
-          <option value="CO">Colorado</option>
-          <option value="CT">Connecticut</option>
-          <option value="ID">Idaho</option>
-          <option value="MA">Massachusetts</option>
-          <option value="ME">Maine</option>
-          <option value="MT">Montana</option>
-          <option value="NH">New Hampshire</option>
-          <option value="NY">New York</option>
-          <option value="OR">Oregon</option>
-          <option value="UT">Utah</option>
-          <option value="VT">Vermont</option>
-          <option value="WA">Washington</option>
-          <option value="WY">Wyoming</option>
+          {usStates.map(state => (
+            <option key={state.value} value={state.value}>{state.label}</option>
+          ))}
         </optgroup>
 
         {/* Canada */}
         <optgroup label="Canada">
-          <option value="AB">Alberta</option>
-          <option value="BC">British Columbia</option>
-          <option value="NS">Nova Scotia</option>
-          <option value="ON">Ontario</option>
-          <option value="QC">Quebec</option>
+          {canadaProvinces.map(province => (
+            <option key={province.value} value={province.value}>{province.label}</option>
+          ))}
         </optgroup>
       </select>
-      <button onClick={() => handleList(selectedState)}>Search by State</button>
+      <button onClick={() => handleList(selectedState)}>List by State</button>
     </div>
   )
 }
