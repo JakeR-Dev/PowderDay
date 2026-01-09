@@ -23,6 +23,10 @@
   }
   input, select {
     width: 150px;
+    transition: opacity .12s linear;
+    &.disabled, &.disabled + button {
+      opacity: .5;
+    }
   }
   input {
     margin-right: 8px;
