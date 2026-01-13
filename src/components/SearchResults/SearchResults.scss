@@ -66,6 +66,11 @@
       background: var(--color-white);
       color: var(--color-black);
       font-weight: bold;
+      margin-right: 12px;
+      @include mixins.media(mobile) {
+        margin-bottom: 12px;
+        margin-right: 0;
+      }
       b {
         display: inline-block;
         font-size: 10px;
@@ -73,24 +78,31 @@
         border-bottom: 1px solid var(--color-gray);
         margin-bottom: 8px;
       }
-      &.status-excellent {
-        &::after {
-          content: '🚀';
+    }
+    .favorite {
+      display: inline-block;
+      height: 16px;
+      width: 16px;
+      cursor: pointer;
+      &:hover {
+       svg {
+        path {
+          stroke: var(--color-gold);
+        }
+       } 
+      }
+      &.is-favorite {
+        svg {
+          path {
+            fill: var(--color-gold);
+            stroke: var(--color-gold);
+          }
         }
       }
-      &.status-good {
-        &::after {
-          content: '👍';
-        }
-      }
-      &.status-fair {
-        &::after {
-          content: '🤷‍♂️';
-        }
-      }
-      &.status-poor {
-        &::after {
-          content: '👎';
+      svg {
+        margin-bottom: 0;
+        path {
+          transition: all .12s linear;
         }
       }
     }
