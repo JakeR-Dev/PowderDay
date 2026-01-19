@@ -22,14 +22,15 @@
     }
   }
   input, select {
-    width: 150px;
+    width: 250px;
     transition: opacity .12s linear;
     &.disabled, &.disabled + button {
       opacity: .5;
     }
-  }
-  input {
-    margin-right: 8px;
+    &::placeholder {
+      color: var(--color-white);
+      opacity: 1;
+    }
   }
   button {
     min-width: 140px;

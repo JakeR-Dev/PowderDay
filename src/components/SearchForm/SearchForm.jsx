@@ -5,7 +5,7 @@ import inputSanitizer from '../../utils/inputSanitizer'
 import './SearchForm.scss'
 
 export default function SearchForm({ setLoading, setResults }) {
-  const [selectedState, setSelectedState] = useState("VT");
+  const [selectedState, setSelectedState] = useState("");
   const [resortQuery, setResortQuery] = useState("");
   const [inputFocus, setInputFocus] = useState("");
   const [selectFocus, setSelectFocus] = useState("");
@@ -20,6 +20,7 @@ export default function SearchForm({ setLoading, setResults }) {
   const handleList = async (stateCode) => {
     setLoading(true);
     setResortQuery("");
+    setSelectedState(stateCode);
 
     const data = await listResorts(stateCode.toLowerCase());
     setResults(data || []);
@@ -28,7 +29,8 @@ export default function SearchForm({ setLoading, setResults }) {
   // search resorts by name
   const handleSearch = async (resortQuery) => {
     setLoading(true);
-    setSelectedState("VT");
+    setSelectedState("");
+    setResortQuery(resortQuery);
 
     const data = await listAllResorts();
     const sanitizedQuery = inputSanitizer(resortQuery).toLowerCase();
@@ -46,8 +48,7 @@ export default function SearchForm({ setLoading, setResults }) {
     <div className="search-form">
       {/* resort search */}
       <div className="search-form-group">
-        <input type="text" className={inputFocus} placeholder="Resort Name" value={resortQuery} onFocus={(e) => toggleFocus("", "disabled")} onChange={(e) => setResortQuery(e.target.value)} />
-        <button onClick={() => handleSearch(resortQuery)}>Search by Name</button>
+        <input type="text" className={inputFocus} placeholder="Search by Resort Name" value={resortQuery} onFocus={(e) => toggleFocus("", "disabled")} onChange={(e) => handleSearch(e.target.value)} />
       </div>
 
       <div className="search-form-group">
@@ -56,7 +57,8 @@ export default function SearchForm({ setLoading, setResults }) {
 
       {/* state list */}
       <div className="search-form-group">
-        <select name="state" className={selectFocus} id="state" value={selectedState} onFocus={(e) => toggleFocus("disabled", "")} onChange={(e) => setSelectedState(e.target.value)}>
+        <select name="state" className={selectFocus} id="state" value={selectedState} onFocus={(e) => toggleFocus("disabled", "")} onChange={(e) => (e.target.value !== '' ? handleList(e.target.value) : handleSearch(e.target.value))}>
+          <option key="" value="">List Resorts by State</option>
           {/* United States */}
           <optgroup label="United States">
             {usStates.map(state => (
@@ -71,7 +73,6 @@ export default function SearchForm({ setLoading, setResults }) {
             ))}
           </optgroup>
         </select>
-        <button onClick={() => handleList(selectedState)}>List by State</button>
       </div>
     </div>
   )
