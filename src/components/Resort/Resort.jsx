@@ -14,6 +14,9 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const surface = data?.primarySurfaceCondition || 'N/A';
   const sendScore = getSendScore(status, freshies, stash, surface);
   const location = data?.location;
+  const openPercent = data?.openDownHillPercent;
+  const openDiff = openPercent ? Math.round(100 - openPercent) + 'px' : 0 + 'px';
+  const openDiffColor = (openPercent == 0 || statusClass == 'status-closed bg-red') ? '#3e3e3e' : '#4DA6FF';
 
   return (
     <li className="resort">
@@ -21,7 +24,14 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
       <span className="resort-left text-center">
         <span className={`resort-status ${statusClass}`}>Resort Status = {status}</span>
         <span className="send-score">{sendScore}</span>
-        <a className={`favorite ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => handleFavoriteClick(resortID)}>
+        <span className="open-percent">
+          <svg width="32" height="32" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <circle className="open-percent_circle" r="14" cx="16" cy="16" fill="transparent" strokeWidth="4"></circle>
+            <circle className="open-percent_progress" r="14" cx="16" cy="16" strokeWidth="3" strokeLinecap="round" strokeDashoffset={openDiff} dataOpen={openPercent} stroke={openDiffColor}></circle>
+            <text className="open-percent_text">%</text>
+          </svg>
+        </span>
+        <a className={`favorite favorite_mobile ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => handleFavoriteClick(resortID)}>
           <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5L14.9 8.3L21.3 9.2L16.6 13.7L17.7 20.1L12 17.1L6.3 20.1L7.4 13.7L2.7 9.2L9.1 8.3Z" fill="transparent" stroke="#A0A0A0" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /></svg>
         </a>
       </span>
@@ -39,11 +49,17 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
         <span className="quick-look"><b>Base Depth:</b> {data?.baseDepthMin === data?.baseDepthMax ? data?.baseDepthMin + '"' : `${data?.baseDepthMin}" - ${data?.baseDepthMax}"`}</span>
         <span className="quick-look"><b>Primary Surface:</b> {surface}</span>
       </span>
+      {/* resort favorite */}
+      <span className="resort-favorite favorite_desktop">
+        <a className={`favorite ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => handleFavoriteClick(resortID)}>
+          <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5L14.9 8.3L21.3 9.2L16.6 13.7L17.7 20.1L12 17.1L6.3 20.1L7.4 13.7L2.7 9.2L9.1 8.3Z" fill="transparent" stroke="#A0A0A0" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /></svg>
+        </a>
+      </span>
       {/* resort additional info */}
       {isOpen && data && (
         <span className="the-goods text-left">
           <span><b>Operating Status:</b> {data.operatingStatus === '' ? 'Open' : data.operatingStatus}</span>
-          <span><b>Open Percent:</b> {data.openDownHillPercent}%</span>
+          <span><b>Open Percent:</b> {openPercent}%</span>
           <span><b>Stash (48hrs):</b> {stash}"</span>
           <span><b>Open Lifts:</b> {data.openDownHillLifts} / {data.maxDownHillLifts}</span>
           <span><b>Weekday Hours:</b> {data.weekdayHours}</span>

@@ -9,10 +9,7 @@
   border-radius: 8px;
   grid-template-columns: repeat(1, 1fr);
   @include mixins.media(mobile) {
-    grid-template-columns: 46px 2fr 3fr;
-    grid-template-areas:
-      "status left right"
-      "full full full";
+    grid-template-columns: 46px 2fr 3fr 20px;  
   }
   .resort-left {
     display: flex;
@@ -38,9 +35,9 @@
     height: 10px;
     border-radius: 50%;
     font-size: 0;
-    margin: 0 16px;
+    margin: 0 16px 0 0;
     @include mixins.media(mobile) {
-      margin: 8px auto 16px;
+      margin: 8px auto 12px;
     }
   }
   .send-score {
@@ -55,7 +52,7 @@
     font-weight: bold;
     margin-right: 12px;
     @include mixins.media(mobile) {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       margin-right: 0;
     }
     b {
@@ -91,6 +88,45 @@
       path {
         transition: all .12s linear;
       }
+    }
+    &_mobile {
+      display: inline-block;
+      @include mixins.media(mobile) {
+        display: none;
+      }
+    }
+    &_desktop {
+      display: none;
+      @include mixins.media(mobile) {
+        display: inline-block;
+      }
+    }
+  }
+  .open-percent {
+    margin-right: auto;
+    @include mixins.media(mobile) {
+      margin-right: 0;
+    }
+    svg {
+      position: relative;
+      display: block;
+      margin: 0 auto;
+      transform: rotate(-90deg);
+    }
+    &_circle {
+      stroke: var(--color-gray-dark);
+    }
+    &_progress {
+      stroke-dasharray: 85px;
+      fill: transparent;
+    }
+    &_text {
+      position: absolute;
+      fill: var(--color-white);
+      font-size: 10px;
+      top: 50%;
+      left: 50%;
+      transform: translate(41%, 36%) rotate(90deg);
     }
   }
   .the-goods {
