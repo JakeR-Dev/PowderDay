@@ -16,16 +16,12 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const location = data?.location;
   const openPercent = data?.openDownHillPercent;
   const openDiff = openPercent ? Math.round(100 - openPercent) + 'px' : 0 + 'px';
-  var openDiffColor = 'open-blue';
-  if (openPercent == 0 || statusClass == 'status-closed bg-red') {
-    openDiffColor = 'open-gray';
-  } else if (openPercent <= 25 && statusClass == 'status-open bg-green') {
-    openDiffColor = 'open-red';
-  } else if (openPercent <= 50 && statusClass == 'status-open bg-green') {
-    openDiffColor = 'open-gold';
-  } else if (openPercent >= 95 && statusClass == 'status-open bg-green') {
-    openDiffColor = 'open-green';
-  }
+  const openDiffColor = 
+    (openPercent === 0 || statusClass === 'status-closed bg-red') ? 'open-gray' :
+    (openPercent <= 25 && statusClass === 'status-open bg-green') ? 'open-red' :
+    (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
+    (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
+    'open-blue';
 
   return (
     <li className="resort">
