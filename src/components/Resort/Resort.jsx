@@ -16,7 +16,16 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const location = data?.location;
   const openPercent = data?.openDownHillPercent;
   const openDiff = openPercent ? Math.round(100 - openPercent) + 'px' : 0 + 'px';
-  const openDiffColor = (openPercent == 0 || statusClass == 'status-closed bg-red') ? '#3e3e3e' : '#4DA6FF';
+  var openDiffColor = 'open-blue';
+  if (openPercent == 0 || statusClass == 'status-closed bg-red') {
+    openDiffColor = 'open-gray';
+  } else if (openPercent <= 25 && statusClass == 'status-open bg-green') {
+    openDiffColor = 'open-red';
+  } else if (openPercent <= 50 && statusClass == 'status-open bg-green') {
+    openDiffColor = 'open-gold';
+  } else if (openPercent >= 95 && statusClass == 'status-open bg-green') {
+    openDiffColor = 'open-green';
+  }
 
   return (
     <li className="resort">
@@ -27,7 +36,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
         <span className="open-percent">
           <svg width="32" height="32" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <circle className="open-percent_circle" r="14" cx="16" cy="16" fill="transparent" strokeWidth="4"></circle>
-            <circle className="open-percent_progress" r="14" cx="16" cy="16" strokeWidth="3" strokeLinecap="round" strokeDashoffset={openDiff} dataOpen={openPercent} stroke={openDiffColor}></circle>
+            <circle className={`open-percent_progress ${openDiffColor}`} r="14" cx="16" cy="16" strokeWidth="3" strokeLinecap="round" strokeDashoffset={openDiff} dataopen={openPercent}></circle>
             <text x="11" y="20" className="open-percent_text">%</text>
           </svg>
         </span>

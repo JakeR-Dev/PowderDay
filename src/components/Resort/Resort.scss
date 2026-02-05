@@ -119,15 +119,27 @@
     &_progress {
       stroke-dasharray: 85px;
       fill: transparent;
+      &.open-blue {
+        stroke: var(--color-snow);
+      }
+      &.open-gray {
+        stroke: var(--color-gray-dark);
+      }
+      &.open-red {
+        stroke: var(--color-red);
+      }
+      &.open-gold {
+        stroke: var(--color-gold);
+      }
+      &.open-green {
+        stroke: var(--color-green);
+      }
     }
     &_text {
       position: absolute;
       fill: var(--color-white);
       font-size: 10px;
       font-weight: bold;
-      // top: 50%;
-      // left: 50%;
-      // transform: translate(41%, 36%) rotate(90deg);
     }
   }
   .the-goods {
