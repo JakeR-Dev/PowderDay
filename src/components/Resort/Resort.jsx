@@ -28,7 +28,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
           <svg width="32" height="32" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <circle className="open-percent_circle" r="14" cx="16" cy="16" fill="transparent" strokeWidth="4"></circle>
             <circle className="open-percent_progress" r="14" cx="16" cy="16" strokeWidth="3" strokeLinecap="round" strokeDashoffset={openDiff} dataOpen={openPercent} stroke={openDiffColor}></circle>
-            <text className="open-percent_text">%</text>
+            <text x="11" y="20" className="open-percent_text">%</text>
           </svg>
         </span>
         <a className={`favorite favorite_mobile ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => handleFavoriteClick(resortID)}>
