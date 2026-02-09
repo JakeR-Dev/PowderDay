@@ -1,9 +1,11 @@
-import { getResortSnowReport } from '../Api.jsx';
+import { getResortSnowReport, getResortWeather } from '../Api.jsx';
+
 
 export default async function getResortInfo(resortID) {
   const data = await getResortSnowReport(resortID);
   const resortInfo = data.items[0];
-  // console.log(resortInfo);
+  const resortName = resortInfo?.resortName || 'N/A';
+  const resortLoc = resortInfo?.state + ', ' + resortInfo?.country || '';
 
   // format the date
   let reportDate = new Date(resortInfo?.reportDateTime);
@@ -18,9 +20,14 @@ export default async function getResortInfo(resortID) {
   reportDate = new Intl.DateTimeFormat("en-US", options).format(reportDate);
   reportDate = reportDate.replace(',', ' @');
 
+  // get the weather
+  const weather = await getResortWeather(resortName, resortLoc);
+  const forecast = weather?.forecast.forecastday[0]?.day || {};
+  // console.log(forecast);
+
   return {
-    name: resortInfo?.resortName || 'N/A',
-    location: resortInfo?.state + ', ' + resortInfo?.country || '',
+    name: resortName,
+    location: resortLoc,
     resortStatus: resortInfo?.resortStatus || '7',
     operatingStatus: resortInfo?.operatingStatus || '',
     minLast24Hours: Number(resortInfo?.newSnowMin) || 0,
@@ -37,5 +44,10 @@ export default async function getResortInfo(resortID) {
     snowLast48Hours: Number(resortInfo?.snowLast48Hours) || 0,
     weekdayHours: resortInfo?.weekdayHours || 'N/A',
     weekendHours: resortInfo?.weekendHours || 'N/A',
+    forecastWeather: forecast?.condition?.text,
+    forecastWind: Number(forecast?.maxwind_mph),
+    forecastSnow: Number(forecast?.daily_chance_of_snow),
+    forecastMinTemp: Number(forecast?.mintemp_f),
+    forecastMaxTemp: Number(forecast?.maxtemp_f)
   };
 }

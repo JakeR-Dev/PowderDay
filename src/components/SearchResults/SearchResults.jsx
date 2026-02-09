@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import Resort from '../Resort/Resort'
 import getResortInfo from '../../utils/getResortInfo'
-import { getResortWeather } from '../../Api'
 import './SearchResults.scss'
 
 export default function SearchResults({ loading, setLoading, results, hasSearched, setHasSearched }) {
@@ -19,8 +18,6 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
       const fetchFavoritesData = async () => {
         const favoritesPromises = favoritesArray.map(async (favorite) => {
           const info = await getResortInfo(favorite);
-          const weather = await getResortWeather(info.name, info.location);
-          console.log(weather);
           return { id: favorite, ...info };
         });
 

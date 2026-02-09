@@ -8,7 +8,7 @@ import './App.scss'
 function App() {
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   return (
     <>

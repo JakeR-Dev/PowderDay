@@ -22,6 +22,11 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
     (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
     (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
     'open-blue';
+  const forecastWeather = data?.forecastWeather;
+  const forecastWind = data?.forecastWind !== undefined ? Math.round(data?.forecastWind) : undefined;
+  const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : undefined;
+  const forecastMinTemp = data?.forecastMinTemp !== undefined ? Math.round(data?.forecastMinTemp) : undefined;
+  const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : undefined;
 
   return (
     <li className="resort">
@@ -50,6 +55,9 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
       </span>
       {/* resort quick look info */}
       <span className="resort-right text-left">
+        {forecastWeather && forecastMinTemp && forecastMaxTemp && (
+          <span className="quick-look color-gray"><b>{forecastWeather}</b> <i>{forecastMinTemp}&deg;F / {forecastMaxTemp}&deg;F</i></span>
+        )}
         <span className="quick-look"><b>Freshies (24hrs):</b> {freshies}"</span>
         <span className="quick-look"><b>Base Depth:</b> {data?.baseDepthMin === data?.baseDepthMax ? data?.baseDepthMin + '"' : `${data?.baseDepthMin}" - ${data?.baseDepthMax}"`}</span>
         <span className="quick-look"><b>Primary Surface:</b> {surface}</span>
@@ -67,6 +75,8 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
           <span><b>Open Percent:</b> {openPercent}%</span>
           <span><b>Stash (48hrs):</b> {stash}"</span>
           <span><b>Open Lifts:</b> {data.openDownHillLifts} / {data.maxDownHillLifts}</span>
+          <span><b>Max Wind: </b>{forecastWind} mph</span>
+          <span><b>Chance of Snow:</b> {forecastSnow}%</span>
           <span><b>Weekday Hours:</b> {data.weekdayHours}</span>
           <span><b>Weekend Hours:</b> {data.weekendHours}</span>
           <span><b>Report Date:</b> {data.reportDateTime}</span>

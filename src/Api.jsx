@@ -52,36 +52,39 @@ export async function getResortSnowReport(resortId) {
 
 // get resort coordinates name
 export async function getResortCoordinates(resortName, resortState) {
-  const resortStr = resortName + ',' + resortState;
-  const url = 'https://nominatim.openstreetmap.org/search?q=' + resortStr + '&format=json&limit=1&countrycodes=CA,US';
+  const resortStr = encodeURIComponent(resortName + ', ' + resortState) + ' ski';
+  const GEOAPIFY_KEY = '304569c2baf9445ab41a9a49168602f8';
+  const url = 'https://api.geoapify.com/v1/geocode/search?text=' + resortStr + '&state=' + encodeURIComponent(resortState) + '&lang=en&limit=1&filter=countrycode:us,ca&format=json&apiKey=' + GEOAPIFY_KEY;
   const options = {
     method: 'GET'
   };
 
   try {
     const response = await fetch(url, options);
-    const result = JSON.parse(await response.text());
-    const coordinates = result ? result[0].lat + ',' + result[0].lon : 'null';
+    const result = await response.json();
+    // console.log(result);
+    const coordinates = result && result.results.length ? result.results[0].lat + ',' + result.results[0].lon : null;
     return coordinates;
   } catch (error) {
     console.error(error);
   }
 }
 
-// getResortZip('Okemo Mountain Resort', 'VT');
-
 // get weather info for resort
 export async function getResortWeather(resortName, resortState) {
   const coordinates = await getResortCoordinates(resortName, resortState);
-  const url = 'https://api.weatherapi.com/v1/current.json?key=7af5f47e0fc24880a32195158260502&q=' + coordinates;
+  if (!coordinates) return null;
+
+  const url = 'https://api.weatherapi.com/v1/forecast.json?key=7af5f47e0fc24880a32195158260502&q=' + coordinates;
   const options = {
     method: 'GET'
   };
 
   try {
     const response = await fetch(url, options);
-    const result = await response.text();
-    return JSON.parse(result);
+    const result = await response.json();
+    // console.log(result);
+    return result;
   } catch (error) {
     console.error(error);
   }
