@@ -1,4 +1,5 @@
 import { usStates, canadaProvinces } from './data/statesList'
+import { coordinatesList } from './data/coordinatesList'
 
 // list resorts by state
 export async function listResorts(stateCode = 'vt') {
@@ -53,6 +54,12 @@ export async function getResortSnowReport(resortId) {
 // get resort coordinates name
 export async function getResortCoordinates(resortName, resortState) {
   const resortStr = encodeURIComponent(resortName + ', ' + resortState) + ' ski';
+
+  // use the cached coordinates if they exist
+  const cached = coordinatesList[resortStr] || null;
+  if (cached) return cached;
+
+  // otherwise, retrieve them from the api
   const GEOAPIFY_KEY = '304569c2baf9445ab41a9a49168602f8';
   const url = 'https://api.geoapify.com/v1/geocode/search?text=' + resortStr + '&state=' + encodeURIComponent(resortState) + '&lang=en&limit=1&filter=countrycode:us,ca&format=json&apiKey=' + GEOAPIFY_KEY;
   const options = {
@@ -64,14 +71,27 @@ export async function getResortCoordinates(resortName, resortState) {
     const result = await response.json();
     // console.log(result);
     const coordinates = result && result.results.length ? result.results[0].lat + ',' + result.results[0].lon : null;
+    
+    // store the coordinates
+    if (coordinates) {
+      coordinatesList[resortStr] = coordinates;
+    }
+    // return the newly-stored cordinates
     return coordinates;
   } catch (error) {
     console.error(error);
   }
 }
 
+export function exportCoordinatesCache() {
+  console.log('Copy this to coordinatesList.js:');
+  console.log(JSON.stringify(coordinatesList, null, 2));
+  return coordinatesList;
+}
+
 // get weather info for resort
 export async function getResortWeather(resortName, resortState) {
+  // TODO: store coordinates in json file, reference that instead of making fetch call every time
   const coordinates = await getResortCoordinates(resortName, resortState);
   if (!coordinates) return null;
 
