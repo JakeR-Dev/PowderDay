@@ -53,7 +53,7 @@ export async function getResortSnowReport(resortId) {
 
 // get resort coordinates name
 export async function getResortCoordinates(resortName, resortState) {
-  const resortStr = encodeURIComponent(resortName + ', ' + resortState) + ' ski';
+  const resortStr = resortName + ', ' + resortState;
 
   // use the cached coordinates if they exist
   const cached = coordinatesList[resortStr] || null;
@@ -61,7 +61,7 @@ export async function getResortCoordinates(resortName, resortState) {
 
   // otherwise, retrieve them from the api
   const GEOAPIFY_KEY = '304569c2baf9445ab41a9a49168602f8';
-  const url = 'https://api.geoapify.com/v1/geocode/search?text=' + resortStr + '&state=' + encodeURIComponent(resortState) + '&lang=en&limit=1&filter=countrycode:us,ca&format=json&apiKey=' + GEOAPIFY_KEY;
+  const url = 'https://api.geoapify.com/v1/geocode/search?text=' + encodeURIComponent(resortStr) + '&state=' + encodeURIComponent(resortState) + '&lang=en&limit=1&filter=countrycode:us,ca&format=json&apiKey=' + GEOAPIFY_KEY;
   const options = {
     method: 'GET'
   };
@@ -69,7 +69,6 @@ export async function getResortCoordinates(resortName, resortState) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
-    // console.log(result);
     const coordinates = result && result.results.length ? result.results[0].lat + ',' + result.results[0].lon : null;
     
     // store the coordinates
@@ -95,7 +94,7 @@ export async function getResortWeather(resortName, resortState) {
   const coordinates = await getResortCoordinates(resortName, resortState);
   if (!coordinates) return null;
 
-  const url = 'https://api.weatherapi.com/v1/forecast.json?key=7af5f47e0fc24880a32195158260502&q=' + coordinates;
+  const url = 'https://api.weatherapi.com/v1/forecast.json?key=7af5f47e0fc24880a32195158260502&q=' + encodeURIComponent(coordinates);
   const options = {
     method: 'GET'
   };

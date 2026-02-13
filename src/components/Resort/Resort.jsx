@@ -22,11 +22,18 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
     (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
     (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
     'open-blue';
-  const forecastWeather = data?.forecastWeather;
+  const forecastWeather =
+    (data?.forecastWeather == 'Thundery outbreaks in nearby') ? 'Thunder nearby' :
+    (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers' :
+    (data?.forecastWeather == 'Patchy rain nearby') ? 'Rain nearby' :
+    (data?.forecastWeather == 'Moderate rain') ? 'Rain' :
+    (data?.forecastWeather == 'Mist') ? 'Partly cloudy' :
+    data?.forecastWeather;
   const forecastWind = data?.forecastWind !== undefined ? Math.round(data?.forecastWind) : undefined;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : undefined;
   const forecastMinTemp = data?.forecastMinTemp !== undefined ? Math.round(data?.forecastMinTemp) : undefined;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : undefined;
+  const hasForecast = forecastWeather != null && forecastMinTemp != null && forecastMaxTemp != null;
 
   return (
     <li className="resort">
@@ -55,8 +62,8 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
       </span>
       {/* resort quick look info */}
       <span className="resort-right text-left">
-        {forecastWeather && forecastMinTemp && forecastMaxTemp && (
-          <span className="quick-look color-gray"><b>{forecastWeather}</b> <i>{forecastMinTemp}&deg;F / {forecastMaxTemp}&deg;F</i></span>
+        {hasForecast && (
+          <span className="quick-look color-gray"><b>{forecastWeather}</b> &middot; <i>{forecastMinTemp}&deg;F / {forecastMaxTemp}&deg;F</i></span>
         )}
         <span className="quick-look"><b>Freshies (24hrs):</b> {freshies}"</span>
         <span className="quick-look"><b>Base Depth:</b> {data?.baseDepthMin === data?.baseDepthMax ? data?.baseDepthMin + '"' : `${data?.baseDepthMin}" - ${data?.baseDepthMax}"`}</span>
