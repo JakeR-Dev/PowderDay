@@ -32,6 +32,8 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
       };
 
       fetchFavoritesData();
+    } else {
+      setLoading(false);
     }
   }, []);
 
@@ -91,11 +93,11 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
           <div className="loader-two" aria-hidden></div>
         </div>
 
-        // if no results after search
+      // if no results after search
       ) : (results.length === 0 || !results.items || results.items.length === 0) && hasSearched ? (
         <p>No results found, try something else.</p>
 
-        // if haven't searched yet, show favorites
+      // if haven't searched yet, show favorites
       ) : (results.length === 0 && favorites.length) ? (
         <ul>
           {favorites.map((resort) => {
@@ -107,10 +109,12 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
             );
           })}
         </ul>
-        // if haven't searched yet, but there are no favorites
+
+      // if haven't searched yet, but there are no favorites
       ) : (results.length === 0) ? (
         <p></p>
-        // otherwise, show results
+
+      // otherwise, show results
       ) : (
         <ul>
           {results.items.map((resort) => {
