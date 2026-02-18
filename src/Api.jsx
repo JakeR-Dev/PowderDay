@@ -7,7 +7,7 @@ export async function listResorts(stateCode = 'vt') {
   const options = {
     method: 'GET'
   };
-  
+
   try {
     const response = await fetch(url, options);
     const result = await response.text();
@@ -54,9 +54,8 @@ export async function getResortSnowReport(resortId) {
 // get resort coordinates name
 export async function getResortCoordinates(resortName, resortState) {
   const resortStr = resortName + ', ' + resortState;
-
   // use the cached coordinates if they exist
-  const cached = coordinatesList[resortStr] || null;
+  const cached = coordinatesList[resortStr] ? (coordinatesList[resortStr].coordinates || coordinatesList[resortStr]) : null;
   if (cached) return cached;
 
   // otherwise, retrieve them from the api
@@ -70,27 +69,67 @@ export async function getResortCoordinates(resortName, resortState) {
     const response = await fetch(url, options);
     const result = await response.json();
     const coordinates = result && result.results.length ? result.results[0].lat + ',' + result.results[0].lon : null;
-    
-    // store the coordinates
-    if (coordinates) {
-      coordinatesList[resortStr] = coordinates;
-    }
-    // return the newly-stored cordinates
     return coordinates;
   } catch (error) {
     console.error(error);
   }
 }
 
-export function exportCoordinatesCache() {
-  console.log('Copy this to coordinatesList.js:');
-  console.log(JSON.stringify(coordinatesList, null, 2));
-  return coordinatesList;
+export async function getForecastURL(resortName, resortState) {
+  const resortStr = resortName + ', ' + resortState;
+  // use the cached forecast url if it exists
+  const cachedForecastURL = coordinatesList[resortStr] ? coordinatesList[resortStr].forecast : null;
+  if (cachedForecastURL) return cachedForecastURL;
+
+  // otherwise, fetch it from API
+  const coordinates = await getResortCoordinates(resortName, resortState);
+  if (!coordinates) return null;
+
+  const gridPointURL = 'https://api.weather.gov/points/' + encodeURIComponent(coordinates);
+  const options = {
+    Accept: "application/geo+json",
+    "User-Agent": "Powder Day (jryan6492@gmail.com)",
+  }
+
+  try {
+    // translate the lat/lon coordinates into a grid point
+    const gridPoints = await fetch(gridPointURL, options);
+    if (!gridPoints) return null;
+
+    // get the forecast url from the grid point data
+    const gridData = await gridPoints.json();
+    const forecastURL = gridData?.properties?.forecast;
+    if (forecastURL) return forecastURL;
+
+    // otherwise, return null
+    return null;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-// get weather info for resort
+// get national weather service info for resort
 export async function getResortWeather(resortName, resortState) {
-  // TODO: store coordinates in json file, reference that instead of making fetch call every time
+  const forecastURL = await getForecastURL(resortName, resortState);
+  if (!forecastURL) return null;
+  // console.log(forecastURL);
+  const options = {
+    Accept: "application/geo+json",
+    "User-Agent": "Powder Day (jryan6492@gmail.com)",
+  }
+
+  try {
+    // get the forecast
+    const forecastData = await fetch(forecastURL, options);
+    const forecast = await forecastData.json();
+    return (forecast);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// use weatherApi to get weather instead of national weather service
+export async function getResortWeatherCan(resortName, resortState) {
   const coordinates = await getResortCoordinates(resortName, resortState);
   if (!coordinates) return null;
 

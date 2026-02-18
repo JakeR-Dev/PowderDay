@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import Resort from '../Resort/Resort'
 import getResortInfo from '../../utils/getResortInfo'
 import './SearchResults.scss'
-import { exportCoordinatesCache } from '../../Api'
 
 export default function SearchResults({ loading, setLoading, results, hasSearched, setHasSearched }) {
   const [resortData, setResortData] = useState({});

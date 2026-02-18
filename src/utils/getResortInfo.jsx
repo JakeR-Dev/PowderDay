@@ -1,5 +1,4 @@
-import { getResortSnowReport, getResortWeather } from '../Api.jsx';
-
+import { getResortSnowReport, getResortWeather, getResortWeatherCan } from '../Api.jsx';
 
 export default async function getResortInfo(resortID) {
   const data = await getResortSnowReport(resortID);
@@ -21,9 +20,9 @@ export default async function getResortInfo(resortID) {
   reportDate = reportDate.replace(',', ' @');
 
   // get the weather
-  const weather = await getResortWeather(resortName, resortLoc);
-  const forecast = weather?.forecast.forecastday[0]?.day || {};
-  // console.log(forecast);
+  const isCan = (resortInfo?.country === 'CAN') ? true : false;
+  const weather = (isCan) ? await getResortWeatherCan(resortName, resortLoc) : await getResortWeather(resortName, resortLoc);
+  const forecast = (isCan) ? weather?.forecast?.forecastday[0]?.day || {} : weather?.properties?.periods?.[0] || {};
 
   return {
     name: resortName,
@@ -44,10 +43,9 @@ export default async function getResortInfo(resortID) {
     snowLast48Hours: Number(resortInfo?.snowLast48Hours) || 0,
     weekdayHours: resortInfo?.weekdayHours || 'N/A',
     weekendHours: resortInfo?.weekendHours || 'N/A',
-    forecastWeather: forecast?.condition?.text,
-    forecastWind: Number(forecast?.maxwind_mph),
-    forecastSnow: Number(forecast?.daily_chance_of_snow),
-    forecastMinTemp: Number(forecast?.mintemp_f),
-    forecastMaxTemp: Number(forecast?.maxtemp_f)
+    forecastWeather: (isCan) ? forecast?.condition?.text : forecast.shortForecast,
+    forecastWind: (isCan) ? Number(forecast?.maxwind_mph) + ' mph' : forecast.windSpeed,
+    forecastSnow: (isCan) ? Number(forecast?.daily_chance_of_snow) : Number(forecast?.probabilityOfPrecipitation?.value),
+    forecastMaxTemp: (isCan) ? Number(forecast?.maxtemp_f) : Number(forecast?.temperature)
   };
 }

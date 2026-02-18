@@ -22,18 +22,14 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
     (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
     (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
     'open-blue';
-  const forecastWeather =
-    (data?.forecastWeather == 'Thundery outbreaks in nearby') ? 'Thunder nearby' :
-    (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers' :
-    (data?.forecastWeather == 'Patchy rain nearby') ? 'Rain nearby' :
-    (data?.forecastWeather == 'Moderate rain') ? 'Rain' :
-    (data?.forecastWeather == 'Mist') ? 'Partly cloudy' :
+  const forecastWeather = 
+    (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers':
+    (data?.forecastWeather == 'Slight Chance Light Snow' || data?.forecastWeather == 'Slight Chance Very Light Snow') ? 'Chance light snow' :
     data?.forecastWeather;
-  const forecastWind = data?.forecastWind !== undefined ? Math.round(data?.forecastWind) : undefined;
-  const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : undefined;
-  const forecastMinTemp = data?.forecastMinTemp !== undefined ? Math.round(data?.forecastMinTemp) : undefined;
-  const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : undefined;
-  const hasForecast = forecastWeather != null && forecastMinTemp != null && forecastMaxTemp != null;
+  const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
+  const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
+  const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
+  const hasForecast = forecastWeather != null && forecastMaxTemp != null;
 
   return (
     <li className="resort">
@@ -63,7 +59,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
       {/* resort quick look info */}
       <span className="resort-right text-left">
         {hasForecast && (
-          <span className="quick-look color-gray"><b>{forecastWeather}</b> &middot; <i>{forecastMinTemp}&deg;F / {forecastMaxTemp}&deg;F</i></span>
+          <span className="quick-look color-gray"><b>{forecastWeather}</b> &middot; {forecastMaxTemp}&deg;F</span>
         )}
         <span className="quick-look"><b>Freshies (24hrs):</b> {freshies}"</span>
         <span className="quick-look"><b>Base Depth:</b> {data?.baseDepthMin === data?.baseDepthMax ? data?.baseDepthMin + '"' : `${data?.baseDepthMin}" - ${data?.baseDepthMax}"`}</span>
@@ -82,8 +78,12 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
           <span><b>Open Percent:</b> {openPercent}%</span>
           <span><b>Stash (48hrs):</b> {stash}"</span>
           <span><b>Open Lifts:</b> {data.openDownHillLifts} / {data.maxDownHillLifts}</span>
-          <span><b>Max Wind: </b>{forecastWind} mph</span>
-          <span><b>Chance of Snow:</b> {forecastSnow}%</span>
+          {forecastWind !== null && (
+            <span><b>Wind: </b>{forecastWind}</span>
+          )}
+          {forecastSnow !== null && (
+            <span><b>Chance of Snow:</b> {forecastSnow}%</span>
+          )}
           <span><b>Weekday Hours:</b> {data.weekdayHours}</span>
           <span><b>Weekend Hours:</b> {data.weekendHours}</span>
           <span><b>Report Date:</b> {data.reportDateTime}</span>
