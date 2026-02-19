@@ -24,7 +24,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
     'open-blue';
   const forecastWeather = 
     (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers':
-    (data?.forecastWeather == 'Slight Chance Light Snow' || data?.forecastWeather == 'Slight Chance Very Light Snow') ? 'Chance light snow' :
+    (data?.forecastWeather == 'Slight Chance Light Snow' || data?.forecastWeather == 'Slight Chance Very Light Snow' || data?.forecastWeather == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
     data?.forecastWeather;
   const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
