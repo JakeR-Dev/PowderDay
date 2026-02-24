@@ -12,7 +12,6 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const freshies = data?.minLast24Hours + data?.maxLast24Hours / 2;
   const stash = data?.snowLast48Hours;
   const surface = data?.primarySurfaceCondition || 'N/A';
-  const sendScore = getSendScore(status, freshies, stash, surface);
   const location = data?.location;
   const openPercent = data?.openDownHillPercent;
   const openDiff = openPercent ? Math.round(100 - openPercent) + 'px' : 0 + 'px';
@@ -25,11 +24,12 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const forecastWeather = 
     (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers':
     (data?.forecastWeather == 'Slight Chance Light Snow' || data?.forecastWeather == 'Slight Chance Very Light Snow' || data?.forecastWeather == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
-    data?.forecastWeather;
+    (data?.forecastWeather ? data?.forecastWeather.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
   const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
+  const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather);
 
   return (
     <li className="resort">
