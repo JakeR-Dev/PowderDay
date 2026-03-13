@@ -29,7 +29,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
-  const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather);
+  const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
 
   return (
     <li className="resort">
