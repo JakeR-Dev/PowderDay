@@ -5,6 +5,7 @@ import './Resort.scss'
 
 export default function Resort({ resortID, data, favoriteClass, handleFavoriteClick }) {
   const [expandedResortId, setExpandedResortId] = useState(null);
+  
   const resortName = data?.name;
   const status = data?.resortStatus || "7";
   const statusClass = getStatusClass(status);
@@ -28,6 +29,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
+  const weatherLoading = data?.weatherLoading === true;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
   const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
 
@@ -58,7 +60,11 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
       </span>
       {/* resort quick look info */}
       <span className="resort-right text-left">
-        {hasForecast && (
+        {/* forecast */}
+        {weatherLoading && (
+          <span className="quick-look color-gray"><b>Weather loading...</b></span>
+        )}
+        {hasForecast && !weatherLoading && (
           <span className="quick-look color-gray"><b>{forecastWeather}</b> &middot; {forecastMaxTemp}&deg;F</span>
         )}
         <span className="quick-look"><b>Freshies (24hrs):</b> {freshies}"</span>
@@ -78,10 +84,13 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
           <span><b>Open Percent:</b> {openPercent}%</span>
           <span><b>Stash (48hrs):</b> {stash}"</span>
           <span><b>Open Lifts:</b> {data.openDownHillLifts} / {data.maxDownHillLifts}</span>
-          {forecastWind !== null && (
+          {weatherLoading && (
+            <span><b>Forecast:</b> Weather loading...</span>
+          )}
+          {forecastWind !== null && !weatherLoading && (
             <span><b>Wind: </b>{forecastWind}</span>
           )}
-          {forecastSnow !== null && (
+          {forecastSnow !== null && !weatherLoading && (
             <span><b>Chance of Snow:</b> {forecastSnow}%</span>
           )}
           <span><b>Weekday Hours:</b> {data.weekdayHours}</span>
