@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Resort from '../Resort/Resort'
-import getResortInfo from '../../utils/getResortInfo'
+import getResortInfo, { getResortForecast } from '../../utils/getResortInfo'
 import './SearchResults.scss'
 
 export default function SearchResults({ loading, setLoading, results, hasSearched, setHasSearched }) {
@@ -10,6 +10,8 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
 
   // load favorites from localStorage on load
   useEffect(() => {
+    let isCancelled = false;
+
     const storedFavorites = localStorage.getItem('powDayFavorites');
     if (storedFavorites) {
       const favoritesArray = storedFavorites.split(',');
@@ -26,18 +28,44 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
         allFavorites.forEach((favorite) => {
           favoritesMap[favorite.id] = favorite;
         });
+
+        if (isCancelled) return;
+
         setLoading(false);
         setFavoriteResortsData(favoritesMap);
+
+        // Hydrate weather fields in the background after base cards render.
+        await Promise.all(favoritesArray.map(async (favoriteId) => {
+          const baseData = favoritesMap[favoriteId];
+          if (!baseData) return;
+
+          const forecast = await getResortForecast(baseData.name, baseData.location, baseData.country);
+          if (isCancelled) return;
+
+          setFavoriteResortsData((prev) => ({
+            ...prev,
+            [favoriteId]: {
+              ...prev[favoriteId],
+              ...forecast
+            }
+          }));
+        }));
       };
 
       fetchFavoritesData();
     } else {
       setLoading(false);
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   // fetch all resort data when results change
   useEffect(() => {
+    let isCancelled = false;
+
     const fetchAllResortData = async () => {
       if (results.length === 0) return;
 
@@ -52,12 +80,35 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
         dataMap[data.id] = data;
       });
 
+      if (isCancelled) return;
+
       setHasSearched(true);
       setLoading(false);
       setResortData(dataMap);
+
+      // Fetch weather after showing base resort results.
+      await Promise.all(results.items.map(async (resort) => {
+        const baseData = dataMap[resort.id];
+        if (!baseData) return;
+
+        const forecast = await getResortForecast(baseData.name, baseData.location, baseData.country);
+        if (isCancelled) return;
+
+        setResortData((prev) => ({
+          ...prev,
+          [resort.id]: {
+            ...prev[resort.id],
+            ...forecast
+          }
+        }));
+      }));
     };
 
     fetchAllResortData();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [results]);
 
   // add the resort to the favorite localstorage

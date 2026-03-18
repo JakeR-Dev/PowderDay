@@ -4,7 +4,8 @@ export default async function getResortInfo(resortID) {
   const data = await getResortSnowReport(resortID);
   const resortInfo = data.items[0];
   const resortName = resortInfo?.resortName || 'N/A';
-  const resortLoc = resortInfo?.state + ', ' + resortInfo?.country || '';
+  const resortCountry = resortInfo?.country || '';
+  const resortLoc = resortInfo?.state + ', ' + resortCountry || '';
 
   // format the date
   let reportDate = new Date(resortInfo?.reportDateTime);
@@ -19,14 +20,10 @@ export default async function getResortInfo(resortID) {
   reportDate = new Intl.DateTimeFormat("en-US", options).format(reportDate);
   reportDate = reportDate.replace(',', ' @');
 
-  // get the weather
-  const isCan = (resortInfo?.country === 'CAN') ? true : false;
-  const weather = (isCan) ? await getResortWeatherCan(resortName, resortLoc) : await getResortWeather(resortName, resortLoc);
-  const forecast = (isCan) ? weather?.forecast?.forecastday[0]?.day || {} : weather?.properties?.periods?.[0] || {};
-
   return {
     name: resortName,
     location: resortLoc,
+    country: resortCountry,
     resortStatus: resortInfo?.resortStatus || '7',
     operatingStatus: resortInfo?.operatingStatus || '',
     minLast24Hours: Number(resortInfo?.newSnowMin) || 0,
@@ -43,9 +40,30 @@ export default async function getResortInfo(resortID) {
     snowLast48Hours: Number(resortInfo?.snowLast48Hours) || 0,
     weekdayHours: resortInfo?.weekdayHours || 'N/A',
     weekendHours: resortInfo?.weekendHours || 'N/A',
-    forecastWeather: (isCan) ? forecast?.condition?.text : forecast.shortForecast,
-    forecastWind: (isCan) ? Number(forecast?.maxwind_mph) + ' mph' : forecast.windSpeed,
-    forecastSnow: (isCan) ? Number(forecast?.daily_chance_of_snow) : Number(forecast?.probabilityOfPrecipitation?.value),
-    forecastMaxTemp: (isCan) ? Number(forecast?.maxtemp_f) : Number(forecast?.temperature)
+    weatherLoading: true,
+    forecastWeather: 'Weather loading...',
+    forecastWind: 'Weather loading...',
+    forecastSnow: null,
+    forecastMaxTemp: null
+  };
+}
+
+export async function getResortForecast(resortName, resortLoc, resortCountry) {
+  const isCan = resortCountry === 'CAN';
+  const weather = isCan
+    ? await getResortWeatherCan(resortName, resortLoc)
+    : await getResortWeather(resortName, resortLoc);
+  const forecast = isCan
+    ? weather?.forecast?.forecastday?.[0]?.day || {}
+    : weather?.properties?.periods?.[0] || {};
+
+  return {
+    weatherLoading: false,
+    forecastWeather: isCan ? forecast?.condition?.text : forecast?.shortForecast,
+    forecastWind: isCan ? Number(forecast?.maxwind_mph) + ' mph' : forecast?.windSpeed,
+    forecastSnow: isCan
+      ? Number(forecast?.daily_chance_of_snow)
+      : Number(forecast?.probabilityOfPrecipitation?.value),
+    forecastMaxTemp: isCan ? Number(forecast?.maxtemp_f) : Number(forecast?.temperature)
   };
 }
