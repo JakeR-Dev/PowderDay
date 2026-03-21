@@ -1,5 +1,7 @@
 # PowderDay
 
+[![GitHub Pages Status](https://img.shields.io/website?url=https%3A%2F%2Fpowderday.io&up_message=deployed&down_message=down&label=GitHub%20Pages)](https://powderday.io/)
+
 https://powderday.io/
 
 Check for snow before you go
