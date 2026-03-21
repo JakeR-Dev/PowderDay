@@ -23,5 +23,7 @@ This builds assets and deploys them to the `gh-pages` branch. The Github Pages s
 ## API
 
 Resort info courtesy of the SnoCountry API: https://feeds.snocountry.net/
+
 US resort weather from National Weather Service: https://api.weather.gov
+
 CAN resort weather from weatherApi: https://api.weatherapi.com
