@@ -1,6 +1,6 @@
 # PowderDay
 
-https://jaker-dev.github.io/PowderDay/
+https://powderday.io/
 
 Check for snow before you go
 
