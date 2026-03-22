@@ -29,6 +29,11 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
+  const tomorrowForecastWeather =
+    (data?.forecastTomorrow == 'Moderate or heavy snow showers') ? 'Snow showers':
+    (data?.forecastTomorrow == 'Slight Chance Light Snow' || data?.forecastTomorrow == 'Slight Chance Very Light Snow' || data?.forecastTomorrow == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
+    (data?.forecastTomorrow ? data?.forecastTomorrow.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
+  const tomorrowForecastMaxTemp = data?.forecastTomorrowMaxTemp !== undefined ? Math.round(data?.forecastTomorrowMaxTemp) : null;
   const weatherLoading = data?.weatherLoading === true;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
   const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
@@ -61,11 +66,12 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
       {/* resort quick look info */}
       <span className="resort-right text-left">
         {/* forecast */}
-        {weatherLoading && (
+        {weatherLoading ? (
           <span className="quick-look color-gray"><b>Weather loading...</b></span>
-        )}
-        {hasForecast && !weatherLoading && (
+        ) : hasForecast ? (
           <span className="quick-look color-gray"><b>{forecastWeather}</b> &middot; {forecastMaxTemp}&deg;F</span>
+        ) : (
+          <span className="quick-look color-gray"><b>Forecast Unavailable</b></span>
         )}
         <span className="quick-look"><b>Freshies (24hrs):</b> {freshies}"</span>
         <span className="quick-look"><b>Base Depth:</b> {data?.baseDepthMin === data?.baseDepthMax ? data?.baseDepthMin + '"' : `${data?.baseDepthMin}" - ${data?.baseDepthMax}"`}</span>
@@ -92,6 +98,9 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
           )}
           {forecastSnow !== null && !weatherLoading && (
             <span><b>Chance of Snow:</b> {forecastSnow}%</span>
+          )}
+          {tomorrowForecastWeather !== null && !weatherLoading && (
+            <span><b>Tomorrow:</b> {tomorrowForecastWeather} &middot; {tomorrowForecastMaxTemp}&deg;F</span>
           )}
           <span><b>Weekday Hours:</b> {data.weekdayHours}</span>
           <span><b>Weekend Hours:</b> {data.weekendHours}</span>

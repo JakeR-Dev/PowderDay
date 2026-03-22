@@ -133,7 +133,7 @@ export async function getResortWeatherCan(resortName, resortState) {
   const coordinates = await getResortCoordinates(resortName, resortState);
   if (!coordinates) return null;
 
-  const url = 'https://api.weatherapi.com/v1/forecast.json?key=7af5f47e0fc24880a32195158260502&q=' + encodeURIComponent(coordinates);
+  const url = 'https://api.weatherapi.com/v1/forecast.json?key=7af5f47e0fc24880a32195158260502&q=' + encodeURIComponent(coordinates) + '&days=2';
   const options = {
     method: 'GET'
   };
