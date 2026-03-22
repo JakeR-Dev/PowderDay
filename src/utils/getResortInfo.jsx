@@ -44,7 +44,9 @@ export default async function getResortInfo(resortID) {
     forecastWeather: 'Weather loading...',
     forecastWind: 'Weather loading...',
     forecastSnow: null,
-    forecastMaxTemp: null
+    forecastMaxTemp: null,
+    forecastTomorrow: null,
+    forecastTomorrowMaxTemp: null
   };
 }
 
@@ -56,6 +58,9 @@ export async function getResortForecast(resortName, resortLoc, resortCountry) {
   const forecast = isCan
     ? weather?.forecast?.forecastday?.[0]?.day || {}
     : weather?.properties?.periods?.[0] || {};
+  const tomorrowForecast = isCan
+    ? weather?.forecast?.forecastday?.[1]?.day || {}
+    : weather?.properties?.periods?.[2] || {};
 
   return {
     weatherLoading: false,
@@ -64,6 +69,8 @@ export async function getResortForecast(resortName, resortLoc, resortCountry) {
     forecastSnow: isCan
       ? Number(forecast?.daily_chance_of_snow)
       : Number(forecast?.probabilityOfPrecipitation?.value),
-    forecastMaxTemp: isCan ? Number(forecast?.maxtemp_f) : Number(forecast?.temperature)
+    forecastMaxTemp: isCan ? Number(forecast?.maxtemp_f) : Number(forecast?.temperature),
+    forecastTomorrow: isCan? tomorrowForecast?.condition?.text : tomorrowForecast?.shortForecast,
+    forecastTomorrowMaxTemp: isCan ? Number(tomorrowForecast?.maxtemp_f) : Number(tomorrowForecast?.temperature)
   };
 }
