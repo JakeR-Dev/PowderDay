@@ -1,6 +1,6 @@
 import './Footer.scss';
 
-export default function Footer() {
+export const Footer = () => {
   return (
     <footer className="footer">
       {/* <img src="/powder-day-logo.svg" alt="Powder Day Logo" className="footer-logo" /> */}
