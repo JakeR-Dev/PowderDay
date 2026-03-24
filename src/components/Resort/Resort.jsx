@@ -3,9 +3,9 @@ import getSendScore from '../../utils/getSendScore'
 import getStatusClass from '../../utils/getStatusClass'
 import './Resort.scss'
 
-export default function Resort({ resortID, data, favoriteClass, handleFavoriteClick }) {
+export default function Resort({ resortID, data, favoriteClass, onToggleFavorite }) {
   const [expandedResortId, setExpandedResortId] = useState(null);
-  
+
   const resortName = data?.name;
   const status = data?.resortStatus || "7";
   const statusClass = getStatusClass(status);
@@ -16,23 +16,23 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
   const location = data?.location;
   const openPercent = data?.openDownHillPercent;
   const openDiff = openPercent ? Math.round(100 - openPercent) + 'px' : 0 + 'px';
-  const openDiffColor = 
+  const openDiffColor =
     (openPercent === 0 || statusClass === 'status-closed bg-red') ? 'open-gray' :
-    (openPercent <= 25 && statusClass === 'status-open bg-green') ? 'open-red' :
-    (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
-    (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
-    'open-blue';
-  const forecastWeather = 
-    (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers':
-    (data?.forecastWeather == 'Slight Chance Light Snow' || data?.forecastWeather == 'Slight Chance Very Light Snow' || data?.forecastWeather == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
-    (data?.forecastWeather ? data?.forecastWeather.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
+      (openPercent <= 25 && statusClass === 'status-open bg-green') ? 'open-red' :
+        (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
+          (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
+            'open-blue';
+  const forecastWeather =
+    (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers' :
+      (data?.forecastWeather == 'Slight Chance Light Snow' || data?.forecastWeather == 'Slight Chance Very Light Snow' || data?.forecastWeather == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
+        (data?.forecastWeather ? data?.forecastWeather.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
   const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
   const tomorrowForecastWeather =
-    (data?.forecastTomorrow == 'Moderate or heavy snow showers') ? 'Snow showers':
-    (data?.forecastTomorrow == 'Slight Chance Light Snow' || data?.forecastTomorrow == 'Slight Chance Very Light Snow' || data?.forecastTomorrow == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
-    (data?.forecastTomorrow ? data?.forecastTomorrow.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
+    (data?.forecastTomorrow == 'Moderate or heavy snow showers') ? 'Snow showers' :
+      (data?.forecastTomorrow == 'Slight Chance Light Snow' || data?.forecastTomorrow == 'Slight Chance Very Light Snow' || data?.forecastTomorrow == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
+        (data?.forecastTomorrow ? data?.forecastTomorrow.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
   const tomorrowForecastMaxTemp = data?.forecastTomorrowMaxTemp !== undefined ? Math.round(data?.forecastTomorrowMaxTemp) : null;
   const weatherLoading = data?.weatherLoading === true;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
@@ -51,7 +51,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
             <text x="11" y="20" className="open-percent_text">%</text>
           </svg>
         </span>
-        <a className={`favorite favorite_mobile ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => handleFavoriteClick(resortID)}>
+        <a className={`favorite favorite_mobile ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => onToggleFavorite(resortID)}>
           <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5L14.9 8.3L21.3 9.2L16.6 13.7L17.7 20.1L12 17.1L6.3 20.1L7.4 13.7L2.7 9.2L9.1 8.3Z" fill="transparent" stroke="#A0A0A0" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /></svg>
         </a>
       </span>
@@ -79,7 +79,7 @@ export default function Resort({ resortID, data, favoriteClass, handleFavoriteCl
       </span>
       {/* resort favorite */}
       <span className="resort-favorite favorite_desktop">
-        <a className={`favorite ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => handleFavoriteClick(resortID)}>
+        <a className={`favorite ${favoriteClass}`} aria-label="click to favorite this resort" onClick={() => onToggleFavorite(resortID)}>
           <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5L14.9 8.3L21.3 9.2L16.6 13.7L17.7 20.1L12 17.1L6.3 20.1L7.4 13.7L2.7 9.2L9.1 8.3Z" fill="transparent" stroke="#A0A0A0" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /></svg>
         </a>
       </span>

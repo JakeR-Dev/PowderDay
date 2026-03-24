@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react'
 import Resort from '../Resort/Resort'
 import getResortInfo, { getResortForecast } from '../../utils/getResortInfo'
+import { useFavorites } from '../../hooks/useFavorites'
 import './SearchResults.scss'
 
 export default function SearchResults({ loading, setLoading, results, hasSearched, setHasSearched }) {
   const [resortData, setResortData] = useState({});
   const [favoriteResortsData, setFavoriteResortsData] = useState({});
-  const [favorites, setFavorites] = useState([]);
+  const { favorites, toggleFavorite } = useFavorites();
 
-  // load favorites from localStorage on load
+  // load favorite resort data when favorites change
   useEffect(() => {
     let isCancelled = false;
 
-    const storedFavorites = localStorage.getItem('powDayFavorites');
-    if (storedFavorites) {
-      const favoritesArray = storedFavorites.split(',');
-      setFavorites(favoritesArray);
-
+    if (favorites.length > 0) {
       const fetchFavoritesData = async () => {
-        const favoritesPromises = favoritesArray.map(async (favorite) => {
+        const favoritesPromises = favorites.map(async (favorite) => {
           const info = await getResortInfo(favorite);
           return { id: favorite, ...info };
         });
@@ -35,7 +32,7 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
         setFavoriteResortsData(favoritesMap);
 
         // Hydrate weather fields in the background after base cards render.
-        await Promise.all(favoritesArray.map(async (favoriteId) => {
+        await Promise.all(favorites.map(async (favoriteId) => {
           const baseData = favoritesMap[favoriteId];
           if (!baseData) return;
 
@@ -60,7 +57,7 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [favorites, setLoading]);
 
   // fetch all resort data when results change
   useEffect(() => {
@@ -109,24 +106,7 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
     return () => {
       isCancelled = true;
     };
-  }, [results]);
-
-  // add the resort to the favorite localstorage
-  const handleFavoriteClick = (resortId) => {
-    const storedFavorites = localStorage.getItem('powDayFavorites');
-    let favoritesArr = storedFavorites ? storedFavorites.split(',') : [];
-
-    // Remove from favorites
-    if (favoritesArr.includes(resortId)) {
-      favoritesArr = favoritesArr.filter(id => id !== resortId);
-      // Add to favorites
-    } else {
-      favoritesArr.push(resortId);
-    }
-
-    localStorage.setItem('powDayFavorites', favoritesArr.join(','));
-    setFavorites(favoritesArr);
-  }
+  }, [results, setHasSearched, setLoading]);
 
   // check if the resort is part of the favorites localstorage
   const checkFavorite = (resortID) => {
@@ -143,11 +123,11 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
           <div className="loader-two" aria-hidden></div>
         </div>
 
-      // if no results after search
+        // if no results after search
       ) : (results.length === 0 || !results.items || results.items.length === 0) && hasSearched ? (
         <p>No results found, try something else.</p>
 
-      // if haven't searched yet, show favorites
+        // if haven't searched yet, show favorites
       ) : (results.length === 0 && favorites.length) ? (
         <ul>
           {favorites.map((resort) => {
@@ -155,16 +135,16 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
             const favoriteClass = "is-favorite";
 
             return (
-              <Resort key={resort} resortID={resort} data={data} favoriteClass={favoriteClass} handleFavoriteClick={handleFavoriteClick} />
+              <Resort key={resort} resortID={resort} data={data} favoriteClass={favoriteClass} onToggleFavorite={toggleFavorite} />
             );
           })}
         </ul>
 
-      // if haven't searched yet, but there are no favorites
+        // if haven't searched yet, but there are no favorites
       ) : (results.length === 0) ? (
         <p></p>
 
-      // otherwise, show results
+        // otherwise, show results
       ) : (
         <ul>
           {results.items.map((resort) => {
@@ -173,7 +153,7 @@ export default function SearchResults({ loading, setLoading, results, hasSearche
             const favoriteClass = checkFavorite(resort.id) ? 'is-favorite' : '';
 
             return (
-              <Resort key={resort.id} resortID={resort.id} data={data} favoriteClass={favoriteClass} handleFavoriteClick={handleFavoriteClick} />
+              <Resort key={resort.id} resortID={resort.id} data={data} favoriteClass={favoriteClass} onToggleFavorite={toggleFavorite} />
             );
           })}
         </ul>

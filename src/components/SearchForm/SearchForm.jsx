@@ -48,7 +48,7 @@ export default function SearchForm({ setLoading, setResults }) {
     <div className="search-form">
       {/* resort search */}
       <div className="search-form-group">
-        <input type="text" className={inputFocus} placeholder="Search by Resort Name" value={resortQuery} onFocus={(e) => toggleFocus("", "disabled")} onChange={(e) => handleSearch(e.target.value)} />
+        <input type="text" className={inputFocus} placeholder="Search by Resort Name" value={resortQuery} onFocus={() => toggleFocus("", "disabled")} onChange={(e) => handleSearch(e.target.value)} />
       </div>
 
       <div className="search-form-group">
@@ -57,7 +57,7 @@ export default function SearchForm({ setLoading, setResults }) {
 
       {/* state list */}
       <div className="search-form-group">
-        <select name="state" className={selectFocus} id="state" value={selectedState} onFocus={(e) => toggleFocus("disabled", "")} onChange={(e) => (e.target.value !== '' ? handleList(e.target.value) : handleSearch(e.target.value))}>
+        <select name="state" className={selectFocus} id="state" value={selectedState} onFocus={() => toggleFocus("disabled", "")} onChange={(e) => (e.target.value !== '' ? handleList(e.target.value) : handleSearch(e.target.value))}>
           <option key="" value="">List Resorts by State</option>
           {/* United States */}
           <optgroup label="United States">
