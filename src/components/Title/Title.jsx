@@ -1,6 +1,6 @@
 import './Title.scss'
 
-export default function Title() {
+export const Title = () => {
   return (
     <>
       <svg id="logo" aria-label="Powder Day logo" onClick={() => window.location.reload()} width="50" height="50" viewBox="0 0 483 473" fill="none" xmlns="http://www.w3.org/2000/svg">

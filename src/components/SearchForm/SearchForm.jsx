@@ -4,7 +4,7 @@ import { usStates, canadaProvinces } from '../../data/statesList'
 import inputSanitizer from '../../utils/inputSanitizer'
 import './SearchForm.scss'
 
-export default function SearchForm({ setLoading, setResults }) {
+export const SearchForm = ({ setLoading, setResults }) => {
   const [selectedState, setSelectedState] = useState("");
   const [resortQuery, setResortQuery] = useState("");
   const [inputFocus, setInputFocus] = useState("");

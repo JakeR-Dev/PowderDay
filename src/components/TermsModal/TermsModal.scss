@@ -1,0 +1,45 @@
+.terms-modal {
+  display: block;
+  position: fixed;
+  box-sizing: border-box;
+  top: 1rem;
+  left: 0;
+  width: calc(100vw - 2rem);
+  height: calc(100vh - 2rem);
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1.5rem 1rem;
+  z-index: 99;
+  background: var(--color-white);
+  text-align: left;
+  border-radius: 8px;
+  * {
+    color: var(--color-black);
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  button.close {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    color: var(--color-black);
+    background: transparent;
+    transform: rotate(45deg);
+    font-size: 2rem;
+    font-weight: normal;
+    line-height: 1;
+    padding: 0;
+    border: none; 
+  }
+  hr {
+    color: var(--color-gray);
+    opacity: 0.5;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}

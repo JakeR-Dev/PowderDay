@@ -4,7 +4,7 @@ import getResortInfo, { getResortForecast } from '../../utils/getResortInfo'
 import { useFavorites } from '../../hooks/useFavorites'
 import './SearchResults.scss'
 
-export default function SearchResults({ loading, setLoading, results, hasSearched, setHasSearched }) {
+export const SearchResults = ({ loading, setLoading, results, hasSearched, setHasSearched }) => {
   const [resortData, setResortData] = useState({});
   const [favoriteResortsData, setFavoriteResortsData] = useState({});
   const { favorites, toggleFavorite } = useFavorites();

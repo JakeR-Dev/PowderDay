@@ -16,6 +16,23 @@ button {
     color: var(--color-black);
     border-color: var(--color-white);
   }
+  &.simple {
+    padding: 0;
+    text-transform: none;
+    font-weight: normal;
+    text-decoration: underline;
+    background: transparent;
+    color: inherit;
+    border: none;
+    border-radius: none;
+    font-size: inherit;
+    transition: none;
+    &:hover {
+      background: transparent;
+      color: inherit;
+      border-color: none;
+    }
+  }
 }
 
 a.btn-simple, button.btn-simple {

@@ -8,6 +8,9 @@ body {
   background: var(--color-black);
   color: var(--color-white);
   margin: 0;
+  * {
+    box-sizing: border-box;
+  }
 }
 
 #root {
