@@ -16,8 +16,6 @@ function App() {
   })
   const [showTermsModal, setShowTermsModal] = useState(false)
 
-  console.log(showTermsModal);
-
   return (
     <>
       <Title />
@@ -33,5 +31,4 @@ function App() {
     </>
   )
 }
-
 export default App

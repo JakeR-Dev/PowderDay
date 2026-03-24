@@ -36,6 +36,18 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
   const tomorrowForecastMaxTemp = data?.forecastTomorrowMaxTemp !== undefined ? Math.round(data?.forecastTomorrowMaxTemp) : null;
   const weatherLoading = data?.weatherLoading === true;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
+  const safeTrailMapUrl = (() => {
+    if (!data?.trailMapUrl) return null;
+
+    try {
+      const parsedUrl = new URL(data.trailMapUrl);
+      return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:')
+        ? parsedUrl.toString()
+        : null;
+    } catch {
+      return null;
+    }
+  })();
   const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
 
   return (
@@ -106,7 +118,7 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
           <span><b>Weekend Hours:</b> {data.weekendHours}</span>
           <span><b>Report Date:</b> {data.reportDateTime}</span>
           <span><b>Comments:</b> {data.comments}</span>
-          {data.trailMapUrl !== '' ? <span className="block"><a href={data.trailMapUrl} target="_blank" rel="noopener noreferrer" className="btn-simple">View Trail Map</a></span> : null}
+          {safeTrailMapUrl ? <span className="block"><a href={safeTrailMapUrl} target="_blank" rel="noopener noreferrer" className="btn-simple">View Trail Map</a></span> : null}
         </span>
       )}
     </li>

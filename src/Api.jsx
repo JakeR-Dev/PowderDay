@@ -1,6 +1,11 @@
 import { usStates, canadaProvinces } from './data/statesList'
 import { coordinatesList } from './data/coordinatesList'
 
+const ALL_RESORTS_CACHE_TTL_MS = 5 * 60 * 1000;
+let allResortsCache = null;
+let allResortsCacheTimestamp = 0;
+let allResortsInFlight = null;
+
 // list resorts by state
 export async function listResorts(stateCode = 'vt') {
   const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&resortType=alpine&states=' + stateCode + '&output=json';
@@ -19,6 +24,15 @@ export async function listResorts(stateCode = 'vt') {
 
 // search resorts by name
 export async function listAllResorts() {
+  const now = Date.now();
+  if (allResortsCache && now - allResortsCacheTimestamp < ALL_RESORTS_CACHE_TTL_MS) {
+    return allResortsCache;
+  }
+
+  if (allResortsInFlight) {
+    return allResortsInFlight;
+  }
+
   // get all the states and provinces, join them into a comma-separated list to be used in fetch
   const allStates = [...usStates, ...canadaProvinces].map(s => s.value.toLowerCase()).join(',');
   const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&states=' + allStates + '&output=json';
@@ -26,13 +40,23 @@ export async function listAllResorts() {
     method: 'GET'
   };
 
-  try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    return JSON.parse(result);
-  } catch (error) {
-    console.error(error);
-  }
+  allResortsInFlight = (async () => {
+    try {
+      const response = await fetch(url, options);
+      const result = await response.text();
+      const parsed = JSON.parse(result);
+      allResortsCache = parsed;
+      allResortsCacheTimestamp = Date.now();
+      return parsed;
+    } catch (error) {
+      console.error(error);
+      return null;
+    } finally {
+      allResortsInFlight = null;
+    }
+  })();
+
+  return allResortsInFlight;
 }
 
 // get single resort snow report
