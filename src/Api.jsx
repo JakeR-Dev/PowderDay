@@ -1,24 +1,39 @@
 import { usStates, canadaProvinces } from './data/statesList'
 import { coordinatesList } from './data/coordinatesList'
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'https://powder-day.vercel.app').replace(/\/$/, '');
 const ALL_RESORTS_CACHE_TTL_MS = 5 * 60 * 1000;
 let allResortsCache = null;
 let allResortsCacheTimestamp = 0;
 let allResortsInFlight = null;
 
+const buildApiUrl = (path, params = {}) => {
+  const query = new URLSearchParams(params);
+  const queryString = query.toString();
+  const endpoint = `${API_BASE_URL}${path}`;
+  return queryString ? `${endpoint}?${queryString}` : endpoint;
+};
+
+const fetchJson = async (url, options = { method: 'GET' }) => {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+  return response.json();
+};
+
 // list resorts by state
 export async function listResorts(stateCode = 'vt') {
-  const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&resortType=alpine&states=' + stateCode + '&output=json';
-  const options = {
-    method: 'GET'
-  };
+  const url = buildApiUrl('/api/list-resorts', {
+    resortType: 'alpine',
+    states: stateCode,
+  });
 
   try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    return JSON.parse(result);
+    return await fetchJson(url);
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -35,16 +50,13 @@ export async function listAllResorts() {
 
   // get all the states and provinces, join them into a comma-separated list to be used in fetch
   const allStates = [...usStates, ...canadaProvinces].map(s => s.value.toLowerCase()).join(',');
-  const url = 'https://feeds.snocountry.net/getResortList.php?apiKey=SnoCountry.example&states=' + allStates + '&output=json';
-  const options = {
-    method: 'GET'
-  };
+  const url = buildApiUrl('/api/list-resorts', {
+    states: allStates,
+  });
 
   allResortsInFlight = (async () => {
     try {
-      const response = await fetch(url, options);
-      const result = await response.text();
-      const parsed = JSON.parse(result);
+      const parsed = await fetchJson(url);
       allResortsCache = parsed;
       allResortsCacheTimestamp = Date.now();
       return parsed;
@@ -61,17 +73,15 @@ export async function listAllResorts() {
 
 // get single resort snow report
 export async function getResortSnowReport(resortId) {
-  const url = 'https://feeds.snocountry.net/getSnowReport.php?apiKey=SnoCountry.example&ids=' + resortId + '&output=json';
-  const options = {
-    method: 'GET'
-  };
+  const url = buildApiUrl('/api/snow-report', {
+    ids: resortId,
+  });
 
   try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    return JSON.parse(result);
+    return await fetchJson(url);
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -83,15 +93,13 @@ export async function getResortCoordinates(resortName, resortState) {
   if (cached) return cached;
 
   // otherwise, retrieve them from the api
-  const GEOAPIFY_KEY = '304569c2baf9445ab41a9a49168602f8';
-  const url = 'https://api.geoapify.com/v1/geocode/search?text=' + encodeURIComponent(resortStr) + '&state=' + encodeURIComponent(resortState) + '&lang=en&limit=1&filter=countrycode:us,ca&format=json&apiKey=' + GEOAPIFY_KEY;
-  const options = {
-    method: 'GET'
-  };
+  const url = buildApiUrl('/api/geocode', {
+    text: resortStr,
+    state: resortState,
+  });
 
   try {
-    const response = await fetch(url, options);
-    const result = await response.json();
+    const result = await fetchJson(url);
     const coordinates = result && result.results.length ? result.results[0].lat + ',' + result.results[0].lon : null;
     return coordinates;
   } catch (error) {
@@ -128,7 +136,7 @@ export async function getForecastURL(resortName, resortState) {
     // otherwise, return null
     return null;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -157,17 +165,15 @@ export async function getResortWeatherCan(resortName, resortState) {
   const coordinates = await getResortCoordinates(resortName, resortState);
   if (!coordinates) return null;
 
-  const url = 'https://api.weatherapi.com/v1/forecast.json?key=7af5f47e0fc24880a32195158260502&q=' + encodeURIComponent(coordinates) + '&days=2';
-  const options = {
-    method: 'GET'
-  };
+  const url = buildApiUrl('/api/weather-can', {
+    q: coordinates,
+    days: 2,
+  });
 
   try {
-    const response = await fetch(url, options);
-    const result = await response.json();
-    // console.log(result);
-    return result;
+    return await fetchJson(url);
   } catch (error) {
     console.error(error);
+    return null;
   }
 }

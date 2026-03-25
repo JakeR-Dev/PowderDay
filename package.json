@@ -11,8 +11,6 @@
     "deploy": "npm run build && gh-pages -d dist -f --cname powderday.io"
   },
   "dependencies": {
-    "dotenv": "^17.3.1",
-    "node-fetch": "^3.3.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
