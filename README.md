@@ -29,3 +29,5 @@ Resort info courtesy of the SnoCountry API: https://feeds.snocountry.net/
 US resort weather from National Weather Service: https://api.weather.gov
 
 CAN resort weather from weatherApi: https://api.weatherapi.com
+
+API calls are proxied through serverless functions in [api/](api) hosted on Vercel. Keys are stored as Vercel environment variables and never included in the frontend bundle.
