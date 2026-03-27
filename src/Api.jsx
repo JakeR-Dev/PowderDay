@@ -1,7 +1,8 @@
 import { usStates, canadaProvinces } from './data/statesList'
 import { coordinatesList } from './data/coordinatesList'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+// In local Vite dev, call the deployed Vercel API; in production, use same-origin /api routes.
+const API_BASE_URL = (import.meta.env.DEV ? 'https://powder-day.vercel.app' : '').replace(/\/$/, '');
 const ALL_RESORTS_CACHE_TTL_MS = 5 * 60 * 1000;
 let allResortsCache = null;
 let allResortsCacheTimestamp = 0;
@@ -19,6 +20,12 @@ const fetchJson = async (url, options = { method: 'GET' }) => {
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status}`);
   }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(`Expected JSON response but received: ${contentType || 'unknown content type'}`);
+  }
+
   return response.json();
 };
 
