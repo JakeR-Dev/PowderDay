@@ -1,6 +1,6 @@
 # PowderDay
 
-[![GitHub Pages Status](https://img.shields.io/website?url=https%3A%2F%2Fpowderday.io&up_message=deployed&down_message=down&label=GitHub%20Pages)](https://powderday.io/)
+[![Vercel Status](https://img.shields.io/website?url=https%3A%2F%2Fpowderday.io&up_message=deployed&down_message=down&label=Vercel)](https://powderday.io/)
 
 https://powderday.io/
 
@@ -18,9 +18,7 @@ Built with:
 
 ## Deployment
 
-- From project root, run `npm run deploy`
-
-This builds assets and deploys them to the `gh-pages` branch. The Github Pages site is set to deploy specifically from that `gh-pages` branch.
+Pushing to `main` triggers an automatic build and deploy on Vercel. The app is hosted at https://powderday.io.
 
 ## API
 

@@ -1,7 +1,7 @@
 import { usStates, canadaProvinces } from './data/statesList'
 import { coordinatesList } from './data/coordinatesList'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'https://powder-day.vercel.app').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 const ALL_RESORTS_CACHE_TTL_MS = 5 * 60 * 1000;
 let allResortsCache = null;
 let allResortsCacheTimestamp = 0;
