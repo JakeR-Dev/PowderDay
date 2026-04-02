@@ -1,13 +1,11 @@
 import { usStates, canadaProvinces } from './data/statesList'
 import { coordinatesList } from './data/coordinatesList'
 
-// In local Vite dev, call the deployed Vercel API; in production, use same-origin /api routes.
+// call the deployed Vercel API for local development
+// for production, use same-origin /api routes.
 const API_BASE_URL = (import.meta.env.DEV ? 'https://powder-day.vercel.app' : '').replace(/\/$/, '');
-const ALL_RESORTS_CACHE_TTL_MS = 5 * 60 * 1000;
-let allResortsCache = null;
-let allResortsCacheTimestamp = 0;
-let allResortsInFlight = null;
 
+// helper function to build vercel-hosted api urls
 const buildApiUrl = (path, params = {}) => {
   const query = new URLSearchParams(params);
   const queryString = query.toString();
@@ -15,6 +13,7 @@ const buildApiUrl = (path, params = {}) => {
   return queryString ? `${endpoint}?${queryString}` : endpoint;
 };
 
+// helper function to fetch json from an api endpoint
 const fetchJson = async (url, options = { method: 'GET' }) => {
   const response = await fetch(url, options);
   if (!response.ok) {
@@ -22,7 +21,7 @@ const fetchJson = async (url, options = { method: 'GET' }) => {
   }
 
   const contentType = response.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
+  if (!contentType?.includes('application/json')) {
     throw new Error(`Expected JSON response but received: ${contentType || 'unknown content type'}`);
   }
 
@@ -46,36 +45,17 @@ export async function listResorts(stateCode = 'vt') {
 
 // search resorts by name
 export async function listAllResorts() {
-  const now = Date.now();
-  if (allResortsCache && now - allResortsCacheTimestamp < ALL_RESORTS_CACHE_TTL_MS) {
-    return allResortsCache;
-  }
-
-  if (allResortsInFlight) {
-    return allResortsInFlight;
-  }
-
-  // get all the states and provinces, join them into a comma-separated list to be used in fetch
   const allStates = [...usStates, ...canadaProvinces].map(s => s.value.toLowerCase()).join(',');
   const url = buildApiUrl('/api/list-resorts', {
     states: allStates,
   });
 
-  allResortsInFlight = (async () => {
-    try {
-      const parsed = await fetchJson(url);
-      allResortsCache = parsed;
-      allResortsCacheTimestamp = Date.now();
-      return parsed;
-    } catch (error) {
-      console.error(error);
-      return null;
-    } finally {
-      allResortsInFlight = null;
-    }
-  })();
-
-  return allResortsInFlight;
+  try {
+    return await fetchJson(url);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 // get single resort snow report
@@ -92,7 +72,7 @@ export async function getResortSnowReport(resortId) {
   }
 }
 
-// get resort coordinates name
+// get resort coordinates by name
 export async function getResortCoordinates(resortName, resortState) {
   const resortStr = resortName + ', ' + resortState;
   // use the cached coordinates if they exist
@@ -114,6 +94,7 @@ export async function getResortCoordinates(resortName, resortState) {
   }
 }
 
+// get the national weather service forecast url of the resort
 export async function getForecastURL(resortName, resortState) {
   const resortStr = resortName + ', ' + resortState;
   // use the cached forecast url if it exists
@@ -131,7 +112,7 @@ export async function getForecastURL(resortName, resortState) {
   }
 
   try {
-    // translate the lat/lon coordinates into a grid point
+    // translate the lat/lon coordinates into a grid point using national weather service api
     const gridPoints = await fetch(gridPointURL, options);
     if (!gridPoints) return null;
 
@@ -151,7 +132,7 @@ export async function getForecastURL(resortName, resortState) {
 export async function getResortWeather(resortName, resortState) {
   const forecastURL = await getForecastURL(resortName, resortState);
   if (!forecastURL) return null;
-  // console.log(forecastURL);
+
   const options = {
     Accept: "application/geo+json",
     "User-Agent": "Powder Day (jryan6492@gmail.com)",
@@ -167,7 +148,7 @@ export async function getResortWeather(resortName, resortState) {
   }
 }
 
-// use weatherApi to get weather instead of national weather service
+// for Canada, use weatherApi to get weather instead of national weather service
 export async function getResortWeatherCan(resortName, resortState) {
   const coordinates = await getResortCoordinates(resortName, resortState);
   if (!coordinates) return null;

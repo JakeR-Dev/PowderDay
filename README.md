@@ -28,4 +28,6 @@ US resort weather from National Weather Service: https://api.weather.gov
 
 CAN resort weather from weatherApi: https://api.weatherapi.com
 
-API calls are proxied through serverless functions in [api/](api) hosted on Vercel. Keys are stored as Vercel environment variables and never included in the frontend bundle.
+API requests that require secret keys are proxied through serverless functions in [api/](api) hosted on Vercel. Vercel runs files in the [api/](api) directory server-side, so those functions can read environment variables without exposing keys in frontend bundles.
+
+Most requests from [src/Api.jsx](src/Api.jsx) use this Vercel-based proxy layer before reaching third-party providers. Public National Weather Service requests are made directly from the client since no secret keys are involved.

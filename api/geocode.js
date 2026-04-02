@@ -1,3 +1,6 @@
+// function to reference the geoapify api to get coordinates for a resort
+// acts as a proxy between the front-end and the geoapify api
+
 import { getQueryValue, getServerEnv, handleOptions, proxyJson, rejectInvalidMethod, setCorsHeaders } from './_utils.js';
 
 export default async function handler(req, res) {
