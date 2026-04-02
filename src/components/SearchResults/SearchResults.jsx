@@ -39,13 +39,17 @@ export const SearchResults = ({ loading, setLoading, results, hasSearched, setHa
           const forecast = await getResortForecast(baseData.name, baseData.location, baseData.country);
           if (isCancelled) return;
 
-          setFavoriteResortsData((prev) => ({
-            ...prev,
-            [favoriteId]: {
-              ...prev[favoriteId],
-              ...forecast
-            }
-          }));
+          setFavoriteResortsData((prev) => {
+            const currentFavorite = prev[favoriteId] || {};
+
+            return {
+              ...prev,
+              [favoriteId]: {
+                ...currentFavorite,
+                ...forecast,
+              },
+            };
+          });
         }));
       };
 
@@ -91,13 +95,17 @@ export const SearchResults = ({ loading, setLoading, results, hasSearched, setHa
         const forecast = await getResortForecast(baseData.name, baseData.location, baseData.country);
         if (isCancelled) return;
 
-        setResortData((prev) => ({
-          ...prev,
-          [resort.id]: {
-            ...prev[resort.id],
-            ...forecast
-          }
-        }));
+        setResortData((prev) => {
+          const currentResort = prev[resort.id] || {};
+
+          return {
+            ...prev,
+            [resort.id]: {
+              ...currentResort,
+              ...forecast,
+            },
+          };
+        });
       }));
     };
 

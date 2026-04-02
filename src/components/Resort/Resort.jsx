@@ -6,6 +6,53 @@ import './Resort.scss'
 export default function Resort({ resortID, data, favoriteClass, onToggleFavorite }) {
   const [expandedResortId, setExpandedResortId] = useState(null);
 
+  // helper to return an indication color based on resort open percent
+  const openDiffColorHelper = (openPercent, statusClass) => {
+    return (openPercent === 0 || statusClass === 'status-closed bg-red') ? 'open-gray' :
+           (openPercent <= 25 && statusClass === 'status-open bg-green') ? 'open-red' :
+           (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
+           (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
+           'open-blue';
+  }
+
+  // helper to shorten lengthy forecast verbiage
+  const forecastVerbiageHelper = (forecastWeatherRaw) => {
+    return (forecastWeatherRaw == 'Moderate or heavy snow showers') ? 'Snow showers' :
+           (forecastWeatherRaw == 'Slight Chance Light Snow' || forecastWeatherRaw == 'Slight Chance Very Light Snow' || forecastWeatherRaw == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
+           (forecastWeatherRaw ? forecastWeatherRaw.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
+  }
+
+  // helper to make sure trailmap url is safe and usable
+  const safeTrailMapUrlChecker = (traiMapUrl) => {
+    if (!traiMapUrl) return null;
+
+    try {
+      const parsedUrl = new URL(traiMapUrl);
+      return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') ? parsedUrl.toString() : null;
+    } catch {
+      return null;
+    }
+  }
+
+  // helper function to flag any extreme weather
+  const weatherAlert = (forecastWind, forecastMinTemp, forecastWeather) => {
+    const windValues = typeof forecastWind === 'string'
+      ? (forecastWind.match(/\d+(?:\.\d+)?/g) || []).map(Number)
+      : (Number.isFinite(forecastWind) ? [forecastWind] : []);
+    const maxWind = windValues.length ? Math.max(...windValues) : null;
+    const hasThunder = typeof forecastWeather === 'string' && /\bthunder(storms?)?\b/i.test(forecastWeather);
+    const hasHail = typeof forecastWeather === 'string' && /\bhail\b/i.test(forecastWeather);
+    const hasHeavyRain = typeof forecastWeather === 'string' && /\bheavy rain\b/i.test(forecastWeather);
+
+    if (forecastWind !== null && forecastMinTemp < 0) return '⚠︎ Extreme cold'
+    if (maxWind !== null && maxWind > 30) return '⚠︎ Extreme wind'
+    if (maxWind !== null && maxWind > 15) return '⚠︎ High wind'
+    if (hasThunder) return '⚠︎ Thunderstorms'
+    if (hasHail) return '⚠︎ Hail'
+    if (hasHeavyRain) return '⚠︎ Heavy rain'
+    return 'None';
+  }
+
   const resortName = data?.name;
   const status = data?.resortStatus || "7";
   const statusClass = getStatusClass(status);
@@ -14,41 +61,21 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
   const stash = data?.snowLast48Hours;
   const surface = data?.primarySurfaceCondition || 'N/A';
   const location = data?.location;
-  const openPercent = data?.openDownHillPercent;
+  const openPercent = Number(data?.openDownHillPercent) || 0;
   const openDiff = openPercent ? Math.round(100 - openPercent) + 'px' : 0 + 'px';
-  const openDiffColor =
-    (openPercent === 0 || statusClass === 'status-closed bg-red') ? 'open-gray' :
-      (openPercent <= 25 && statusClass === 'status-open bg-green') ? 'open-red' :
-        (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
-          (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
-            'open-blue';
-  const forecastWeather =
-    (data?.forecastWeather == 'Moderate or heavy snow showers') ? 'Snow showers' :
-      (data?.forecastWeather == 'Slight Chance Light Snow' || data?.forecastWeather == 'Slight Chance Very Light Snow' || data?.forecastWeather == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
-        (data?.forecastWeather ? data?.forecastWeather.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
+  const openDiffColor = openDiffColorHelper(openPercent, statusClass);
+  const forecastWeather = forecastVerbiageHelper(data?.forecastWeather);
   const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
-  const tomorrowForecastWeather =
-    (data?.forecastTomorrow == 'Moderate or heavy snow showers') ? 'Snow showers' :
-      (data?.forecastTomorrow == 'Slight Chance Light Snow' || data?.forecastTomorrow == 'Slight Chance Very Light Snow' || data?.forecastTomorrow == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
-        (data?.forecastTomorrow ? data?.forecastTomorrow.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
+  const forecastMinTemp = data?.forecastMinTemp !== undefined ? Math.round(data?.forecastMinTemp) : null;
+  const tomorrowForecastWeather = forecastVerbiageHelper(data?.forecastTomorrow);
   const tomorrowForecastMaxTemp = data?.forecastTomorrowMaxTemp !== undefined ? Math.round(data?.forecastTomorrowMaxTemp) : null;
   const weatherLoading = data?.weatherLoading === true;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
-  const safeTrailMapUrl = (() => {
-    if (!data?.trailMapUrl) return null;
-
-    try {
-      const parsedUrl = new URL(data.trailMapUrl);
-      return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:')
-        ? parsedUrl.toString()
-        : null;
-    } catch {
-      return null;
-    }
-  })();
+  const safeTrailMapUrl = safeTrailMapUrlChecker(data?.trailMapUrl);
   const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
+  const alerts = weatherAlert(forecastWind, forecastMinTemp, forecastWeather);
 
   return (
     <li className="resort">
@@ -99,6 +126,9 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
       {isOpen && data && (
         <span className="the-goods text-left">
           <span><b>Operating Status:</b> {data.operatingStatus === '' ? 'Open' : data.operatingStatus}</span>
+          {!weatherLoading && (
+            <span><b>Alerts:</b> <span className={alerts !== 'None' ? 'color-gold' : ''}>{alerts}</span></span>
+          )}
           <span><b>Open Percent:</b> {openPercent}%</span>
           <span><b>Stash (48hrs):</b> {stash}"</span>
           <span><b>Open Lifts:</b> {data.openDownHillLifts} / {data.maxDownHillLifts}</span>

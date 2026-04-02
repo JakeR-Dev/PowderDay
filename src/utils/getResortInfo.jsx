@@ -1,5 +1,6 @@
 import { getResortSnowReport, getResortWeather, getResortWeatherCan } from '../Api.jsx';
 
+// use snocountry api to get resort info
 export default async function getResortInfo(resortID) {
   const data = await getResortSnowReport(resortID);
   const resortInfo = data.items[0];
@@ -50,26 +51,20 @@ export default async function getResortInfo(resortID) {
   };
 }
 
+// use the weatherApi to get CAN resort weather, and national weather service for us weather
 export async function getResortForecast(resortName, resortLoc, resortCountry) {
   const isCan = resortCountry === 'CAN';
-  const weather = isCan
-    ? await getResortWeatherCan(resortName, resortLoc)
-    : await getResortWeather(resortName, resortLoc);
-  const forecast = isCan
-    ? weather?.forecast?.forecastday?.[0]?.day || {}
-    : weather?.properties?.periods?.[0] || {};
-  const tomorrowForecast = isCan
-    ? weather?.forecast?.forecastday?.[1]?.day || {}
-    : weather?.properties?.periods?.[2] || {};
+  const weather = isCan ? await getResortWeatherCan(resortName, resortLoc) : await getResortWeather(resortName, resortLoc);
+  const forecast = isCan ? weather?.forecast?.forecastday?.[0]?.day || {} : weather?.properties?.periods?.[0] || {};
+  const tomorrowForecast = isCan ? weather?.forecast?.forecastday?.[1]?.day || {} : weather?.properties?.periods?.[2] || {};
 
   return {
     weatherLoading: false,
     forecastWeather: isCan ? forecast?.condition?.text : forecast?.shortForecast,
     forecastWind: isCan ? Number(forecast?.maxwind_mph) + ' mph' : forecast?.windSpeed,
-    forecastSnow: isCan
-      ? Number(forecast?.daily_chance_of_snow)
-      : Number(forecast?.probabilityOfPrecipitation?.value),
+    forecastSnow: isCan ? Number(forecast?.daily_chance_of_snow) : Number(forecast?.probabilityOfPrecipitation?.value),
     forecastMaxTemp: isCan ? Number(forecast?.maxtemp_f) : Number(forecast?.temperature),
+    forecastMinTemp: isCan ? Number(forecast?.mintemp_f) : Number(forecast?.temperature),
     forecastTomorrow: isCan? tomorrowForecast?.condition?.text : tomorrowForecast?.shortForecast,
     forecastTomorrowMaxTemp: isCan ? Number(tomorrowForecast?.maxtemp_f) : Number(tomorrowForecast?.temperature)
   };
