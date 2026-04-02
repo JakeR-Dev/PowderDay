@@ -1,5 +1,7 @@
-const DEFAULT_ALLOWED_ORIGINS = ['https://powderday.io', 'http://localhost:5173'];
+// set the default allowed origins for CORS
+const DEFAULT_ALLOWED_ORIGINS = ['https://powderday.io', 'http://localhost:5173', 'http://localhost:5174'];
 
+// helper function to get allowed origins for CORS
 const getAllowedOrigins = () => {
   const configured = process.env.ALLOWED_ORIGINS;
   if (!configured) return DEFAULT_ALLOWED_ORIGINS;
@@ -10,6 +12,7 @@ const getAllowedOrigins = () => {
     .filter(Boolean);
 };
 
+// helper function to set CORS headers on a response
 export const setCorsHeaders = (req, res) => {
   const origin = req.headers.origin;
   const allowedOrigins = getAllowedOrigins();
@@ -21,6 +24,7 @@ export const setCorsHeaders = (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 };
 
+// helper function to handle OPTIONS requests for CORS preflight
 export const handleOptions = (req, res) => {
   setCorsHeaders(req, res);
 
@@ -32,6 +36,7 @@ export const handleOptions = (req, res) => {
   return false;
 };
 
+// helper function to reject requests with invalid HTTP methods
 export const rejectInvalidMethod = (req, res, allowedMethod = 'GET') => {
   if (req.method !== allowedMethod) {
     res.status(405).json({ error: 'Method not allowed' });
@@ -41,11 +46,13 @@ export const rejectInvalidMethod = (req, res, allowedMethod = 'GET') => {
   return false;
 };
 
+// helper function to get a query parameter value from the request
 export const getQueryValue = (req, key) => {
   const value = req.query?.[key];
   return Array.isArray(value) ? value[0] : value;
 };
 
+// helper function to get a server environment variable from vercel
 export const getServerEnv = (name, res) => {
   const value = process.env[name];
   if (!value) {
@@ -56,6 +63,7 @@ export const getServerEnv = (name, res) => {
   return value;
 };
 
+// helper function to proxy a json request to an upstream api (ex SnoCountry, Geoapify, WeatherAPI)
 export const proxyJson = async (url, res) => {
   const response = await fetch(url, { method: 'GET' });
   const text = await response.text();

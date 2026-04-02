@@ -1,3 +1,6 @@
+// function to reference the snocountry api to get the snow report for a resort
+// acts as a proxy between the front-end and the snocountry api
+
 import { getQueryValue, getServerEnv, handleOptions, proxyJson, rejectInvalidMethod, setCorsHeaders } from './_utils.js';
 
 const IDS_REGEX = /^[0-9,]+$/;

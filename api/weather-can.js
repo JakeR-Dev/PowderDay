@@ -1,3 +1,7 @@
+// function to reference the weatherapi api to get the forecast for a resort
+// acts as a proxy between the front-end and the weatherapi api
+// specifically used for CAN resorts, since national weather service doesn't cover Canada
+
 import { getQueryValue, getServerEnv, handleOptions, proxyJson, rejectInvalidMethod, setCorsHeaders } from './_utils.js';
 
 const DAYS_REGEX = /^[1-3]$/;
