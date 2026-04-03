@@ -17,9 +17,28 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
 
   // helper to shorten lengthy forecast verbiage
   const forecastVerbiageHelper = (forecastWeatherRaw) => {
-    return (forecastWeatherRaw == 'Moderate or heavy snow showers') ? 'Snow showers' :
-           (forecastWeatherRaw == 'Slight Chance Light Snow' || forecastWeatherRaw == 'Slight Chance Very Light Snow' || forecastWeatherRaw == 'Slight Chance Light Snow then Partly Sunny') ? 'Chance light snow' :
-           (forecastWeatherRaw ? forecastWeatherRaw.replace(/\s+(and|or|then)\s+/gi, ', ').replace(/(areas of|slight|patchy)\s+/gi, ' ') : null);
+    if (!forecastWeatherRaw) return null;
+
+    // strip filler words and normalize spacing
+    const normalized = forecastWeatherRaw
+      .replace(/\s+(and|or|then)\s+/gi, ', ')
+      .replace(/\b(areas of|slight|patchy|mostly|moderate|heavy|very)\b/gi, '')
+      .replace(/\s*,\s*/g, ', ')
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\bthunderstorms?\b/gi, 'T-Storms')
+      .trim();
+
+    // make sure forecast terms aren't repeated
+    const parts = normalized.split(',').map((part) => part.trim()).filter(Boolean);
+    const seen = new Set();
+    const deduped = parts.filter((part) => {
+      const key = part.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    return deduped.join(', ');
   }
 
   // helper to make sure trailmap url is safe and usable
@@ -45,11 +64,12 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
     const hasHeavyRain = typeof forecastWeather === 'string' && /\bheavy rain\b/i.test(forecastWeather);
 
     if (forecastWind !== null && forecastMinTemp < 0) return '⚠︎ Extreme cold'
-    if (maxWind !== null && maxWind > 30) return '⚠︎ Extreme wind'
-    if (maxWind !== null && maxWind > 15) return '⚠︎ High wind'
-    if (hasThunder) return '⚠︎ Thunderstorms'
     if (hasHail) return '⚠︎ Hail'
+    if (hasThunder) return '⚠︎ Thunderstorms'
     if (hasHeavyRain) return '⚠︎ Heavy rain'
+    if (maxWind !== null && maxWind > 40) return '⚠︎ Extreme wind'
+    if (maxWind !== null && maxWind > 30) return '⚠︎ High wind'
+    if (maxWind !== null && maxWind > 20) return '⚠︎ Strong wind'
     return 'None';
   }
 
@@ -75,7 +95,7 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
   const safeTrailMapUrl = safeTrailMapUrlChecker(data?.trailMapUrl);
   const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
-  const alerts = weatherAlert(forecastWind, forecastMinTemp, forecastWeather);
+  const alerts = weatherAlert(forecastWind, forecastMinTemp, data?.forecastWeather);
 
   return (
     <li className="resort">
@@ -139,10 +159,10 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
             <span><b>Wind: </b>{forecastWind}</span>
           )}
           {forecastSnow !== null && !weatherLoading && (
-            <span><b>Chance of Snow:</b> {forecastSnow}%</span>
+            <span><b>Precipitation Chance:</b> {forecastSnow}%</span>
           )}
           {tomorrowForecastWeather !== null && !weatherLoading && (
-            <span><b>Tomorrow:</b> {tomorrowForecastWeather} &middot; {tomorrowForecastMaxTemp}&deg;F</span>
+            <span><b>Tomorrow:</b> <span className="capitalized">{tomorrowForecastWeather}</span> &middot; {tomorrowForecastMaxTemp}&deg;F</span>
           )}
           <span><b>Weekday Hours:</b> {data.weekdayHours}</span>
           <span><b>Weekend Hours:</b> {data.weekendHours}</span>
