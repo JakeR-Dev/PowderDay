@@ -96,7 +96,7 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
             <span><b>Wind: </b>{forecastWind}</span>
           )}
           {forecastSnow !== null && !weatherLoading && (
-            <span><b>Precipitation Chance:</b> {forecastSnow}%</span>
+            <span><b>Chance of Precip:</b> {forecastSnow}%</span>
           )}
           {tomorrowForecastWeather !== null && !weatherLoading && (
             <span><b>Tomorrow:</b> <span className="capitalized">{tomorrowForecastWeather}</span> &middot; {tomorrowForecastMaxTemp}&deg;F</span>
