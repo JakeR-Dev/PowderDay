@@ -1,77 +1,14 @@
 import { useState } from 'react'
 import getSendScore from '../../utils/getSendScore'
 import getStatusClass from '../../utils/getStatusClass'
+import getSafeTrailMap from '../../utils/getSafeTrailMap'
+import getOpenDiffColor from '../../utils/getOpenDiffColor'
+import getForecastVerbiage from '../../utils/getForecastVerbiage'
+import getWeatherAlerts from '../../utils/getWeatherAlerts'
 import './Resort.scss'
 
 export default function Resort({ resortID, data, favoriteClass, onToggleFavorite }) {
   const [expandedResortId, setExpandedResortId] = useState(null);
-
-  // helper to return an indication color based on resort open percent
-  const openDiffColorHelper = (openPercent, statusClass) => {
-    return (openPercent === 0 || statusClass === 'status-closed bg-red') ? 'open-gray' :
-           (openPercent <= 25 && statusClass === 'status-open bg-green') ? 'open-red' :
-           (openPercent <= 50 && statusClass === 'status-open bg-green') ? 'open-gold' :
-           (openPercent >= 95 && statusClass === 'status-open bg-green') ? 'open-green' :
-           'open-blue';
-  }
-
-  // helper to shorten lengthy forecast verbiage
-  const forecastVerbiageHelper = (forecastWeatherRaw) => {
-    if (!forecastWeatherRaw) return null;
-
-    // strip filler words and normalize spacing
-    const normalized = forecastWeatherRaw
-      .replace(/\s+(and|or|then)\s+/gi, ', ')
-      .replace(/\b(areas of|slight|patchy|mostly|moderate|heavy|very)\b/gi, '')
-      .replace(/\s*,\s*/g, ', ')
-      .replace(/\s{2,}/g, ' ')
-      .replace(/\bthunderstorms?\b/gi, 'T-Storms')
-      .trim();
-
-    // make sure forecast terms aren't repeated
-    const parts = normalized.split(',').map((part) => part.trim()).filter(Boolean);
-    const seen = new Set();
-    const deduped = parts.filter((part) => {
-      const key = part.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-
-    return deduped.join(', ');
-  }
-
-  // helper to make sure trailmap url is safe and usable
-  const safeTrailMapUrlChecker = (traiMapUrl) => {
-    if (!traiMapUrl) return null;
-
-    try {
-      const parsedUrl = new URL(traiMapUrl);
-      return (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') ? parsedUrl.toString() : null;
-    } catch {
-      return null;
-    }
-  }
-
-  // helper function to flag any extreme weather
-  const weatherAlert = (forecastWind, forecastMinTemp, forecastWeather) => {
-    const windValues = typeof forecastWind === 'string'
-      ? (forecastWind.match(/\d+(?:\.\d+)?/g) || []).map(Number)
-      : (Number.isFinite(forecastWind) ? [forecastWind] : []);
-    const maxWind = windValues.length ? Math.max(...windValues) : null;
-    const hasThunder = typeof forecastWeather === 'string' && /\bthunder(storms?)?\b/i.test(forecastWeather);
-    const hasHail = typeof forecastWeather === 'string' && /\bhail\b/i.test(forecastWeather);
-    const hasHeavyRain = typeof forecastWeather === 'string' && /\bheavy rain\b/i.test(forecastWeather);
-
-    if (forecastWind !== null && forecastMinTemp < 0) return '⚠︎ Extreme cold'
-    if (hasHail) return '⚠︎ Hail'
-    if (hasThunder) return '⚠︎ Thunderstorms'
-    if (hasHeavyRain) return '⚠︎ Heavy rain'
-    if (maxWind !== null && maxWind > 40) return '⚠︎ Extreme wind'
-    if (maxWind !== null && maxWind > 30) return '⚠︎ High wind'
-    if (maxWind !== null && maxWind > 20) return '⚠︎ Strong wind'
-    return 'None';
-  }
 
   const resortName = data?.name;
   const status = data?.resortStatus || "7";
@@ -83,19 +20,19 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
   const location = data?.location;
   const openPercent = Number(data?.openDownHillPercent) || 0;
   const openDiff = openPercent ? Math.round(100 - openPercent) + 'px' : 0 + 'px';
-  const openDiffColor = openDiffColorHelper(openPercent, statusClass);
-  const forecastWeather = forecastVerbiageHelper(data?.forecastWeather);
+  const openDiffColor = getOpenDiffColor(openPercent, statusClass);
+  const forecastWeather = getForecastVerbiage(data?.forecastWeather);
   const forecastWind = data?.forecastWind !== undefined ? data?.forecastWind : null;
   const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastMaxTemp = data?.forecastMaxTemp !== undefined ? Math.round(data?.forecastMaxTemp) : null;
   const forecastMinTemp = data?.forecastMinTemp !== undefined ? Math.round(data?.forecastMinTemp) : null;
-  const tomorrowForecastWeather = forecastVerbiageHelper(data?.forecastTomorrow);
+  const tomorrowForecastWeather = getForecastVerbiage(data?.forecastTomorrow);
   const tomorrowForecastMaxTemp = data?.forecastTomorrowMaxTemp !== undefined ? Math.round(data?.forecastTomorrowMaxTemp) : null;
   const weatherLoading = data?.weatherLoading === true;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
-  const safeTrailMapUrl = safeTrailMapUrlChecker(data?.trailMapUrl);
+  const safeTrailMapUrl = getSafeTrailMap(data?.trailMapUrl);
   const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
-  const alerts = weatherAlert(forecastWind, forecastMinTemp, data?.forecastWeather);
+  const alerts = getWeatherAlerts(forecastWind, forecastMinTemp, data?.forecastWeather);
 
   return (
     <li className="resort">
