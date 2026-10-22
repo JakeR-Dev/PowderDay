@@ -11,6 +11,9 @@ Built with:
 - Vite
 - SCSS
 
+## Project setup
+- After cloning repository, run `npm i` from project root
+
 ## Compile assets
 
 - Be sure you're running Node v24+
