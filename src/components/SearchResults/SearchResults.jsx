@@ -132,6 +132,9 @@ export const SearchResults = ({ loading, setLoading, results, hasSearched, setHa
           <div className="loader-two" aria-hidden></div>
         </div>
 
+      // TODO:
+      // make favorites persistent, always shows regardless of whether user has them saved or not. also, add a subtitle saying something like "no favorites saved, click a resort's star icon to keep an eye on it here."
+
       // if no results after search
       ) : (results.length === 0 || !results.items || results.items.length === 0) && hasSearched ? (
         <p>No results found, try something else.</p>
