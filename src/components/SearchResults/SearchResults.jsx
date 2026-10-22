@@ -3,6 +3,7 @@ import Resort from '../Resort/Resort'
 import getResortInfo, { getResortForecast } from '../../utils/getResortInfo'
 import { useFavorites } from '../../hooks/useFavorites'
 import './SearchResults.scss'
+import { TopResorts } from '../TopResorts/TopResorts'
 
 export const SearchResults = ({ loading, setLoading, results, hasSearched, setHasSearched }) => {
   const [resortData, setResortData] = useState({});
@@ -131,28 +132,33 @@ export const SearchResults = ({ loading, setLoading, results, hasSearched, setHa
           <div className="loader-two" aria-hidden></div>
         </div>
 
-        // if no results after search
+      // if no results after search
       ) : (results.length === 0 || !results.items || results.items.length === 0) && hasSearched ? (
         <p>No results found, try something else.</p>
 
-        // if haven't searched yet, show favorites
+      // if haven't searched yet, show favorites and top resorts
       ) : (results.length === 0 && favorites.length) ? (
-        <ul>
-          {favorites.map((resort) => {
-            const data = favoriteResortsData[resort];
-            const favoriteClass = "is-favorite";
+        <>
+          <h4>Favorites</h4>
+          <ul>
+            {favorites.map((resort) => {
+              const data = favoriteResortsData[resort];
+              const favoriteClass = "is-favorite";
 
-            return (
-              <Resort key={resort} resortID={resort} data={data} favoriteClass={favoriteClass} onToggleFavorite={toggleFavorite} />
-            );
-          })}
-        </ul>
+              return (
+                <Resort key={resort} resortID={resort} data={data} favoriteClass={favoriteClass} onToggleFavorite={toggleFavorite} />
+              );
+            })}
+          </ul>
 
-        // if haven't searched yet, but there are no favorites
+          <TopResorts></TopResorts>
+        </>
+
+      // if haven't searched yet, but there are no favorites, show top resorts
       ) : (results.length === 0) ? (
-        <p></p>
+        <TopResorts></TopResorts>
 
-        // otherwise, show results
+      // otherwise, show results
       ) : (
         <ul>
           {results.items.map((resort) => {

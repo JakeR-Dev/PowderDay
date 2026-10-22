@@ -14,7 +14,7 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
   const status = data?.resortStatus || "7";
   const statusClass = getStatusClass(status);
   const isOpen = expandedResortId === resortID;
-  const freshies = data?.minLast24Hours + data?.maxLast24Hours / 2;
+  const freshies = data?.freshies;
   const stash = data?.snowLast48Hours;
   const surface = data?.primarySurfaceCondition || 'N/A';
   const location = data?.location;
@@ -31,7 +31,7 @@ export default function Resort({ resortID, data, favoriteClass, onToggleFavorite
   const weatherLoading = data?.weatherLoading === true;
   const hasForecast = forecastWeather != null && forecastMaxTemp != null;
   const safeTrailMapUrl = getSafeTrailMap(data?.trailMapUrl);
-  const sendScore = getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow);
+  const sendScore = getSendScore(data);
   const alerts = getWeatherAlerts(forecastWind, forecastMinTemp, data?.forecastWeather);
 
   return (

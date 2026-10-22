@@ -1,5 +1,13 @@
-// helper to get 'send score'
-export default function getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow) {
+import getForecastVerbiage from './getForecastVerbiage'
+
+// helper to get 'send score' from resort data
+export default function getSendScore(data) {
+  const status = data?.resortStatus || "7";
+  const freshies = data?.freshies;
+  const stash = data?.snowLast48Hours;
+  const surface = data?.primarySurfaceCondition || 'N/A';
+  const forecastWeather = getForecastVerbiage(data?.forecastWeather);
+  const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastWeatherLower = forecastWeather ? forecastWeather.toLowerCase() : '';
   const powFlags = ['snow', 'snow showers', 'heavy snow likely', 'heavy snow'];
  
