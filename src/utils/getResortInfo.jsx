@@ -1,9 +1,35 @@
 import { getResortSnowReport, getResortWeather, getResortWeatherCan } from '../Api.jsx';
+import forEachLimit from './forEachLimit';
+
+// snocountry returns a max of 3 resorts per snow report call
+const SNOW_REPORT_BATCH_SIZE = 3;
 
 // use snocountry api to get resort info
 export default async function getResortInfo(resortID) {
   const data = await getResortSnowReport(resortID);
-  const resortInfo = data.items[0];
+  return formatResortInfo(data?.items?.[0]);
+}
+
+// use snocountry api to get info for many resorts, batched to cut down on requests
+export async function getResortsInfo(resortIDs) {
+  const batches = [];
+  for (let i = 0; i < resortIDs.length; i += SNOW_REPORT_BATCH_SIZE) {
+    batches.push(resortIDs.slice(i, i + SNOW_REPORT_BATCH_SIZE).join(','));
+  }
+
+  const allInfo = [];
+  await forEachLimit(batches, 6, async (ids) => {
+    const data = await getResortSnowReport(ids);
+    (data?.items || []).forEach((item) => {
+      allInfo.push({ id: String(item.id), ...formatResortInfo(item) });
+    });
+  });
+
+  return allInfo;
+}
+
+// format a single snocountry snow report item into resort info
+function formatResortInfo(resortInfo) {
   const resortName = resortInfo?.resortName || 'N/A';
   const resortCountry = resortInfo?.country || '';
   const resortLoc = resortInfo?.state + ', ' + resortCountry || '';

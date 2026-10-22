@@ -151,12 +151,12 @@ export const SearchResults = ({ loading, setLoading, results, hasSearched, setHa
             })}
           </ul>
 
-          <TopResorts></TopResorts>
+          <TopResorts favorites={favorites} onToggleFavorite={toggleFavorite} />
         </>
 
       // if haven't searched yet, but there are no favorites, show top resorts
       ) : (results.length === 0) ? (
-        <TopResorts></TopResorts>
+        <TopResorts favorites={favorites} onToggleFavorite={toggleFavorite} />
 
       // otherwise, show results
       ) : (

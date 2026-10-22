@@ -27,7 +27,7 @@ Pushing to `main` triggers an automatic build and deploy on Vercel. The app is h
 
 API requests that require secret keys are proxied through serverless functions in [api/](api) hosted on Vercel. Vercel runs files in the [api/](api) directory server-side, so those functions can read environment variables without exposing keys in frontend bundles.
 
-Most requests from [src/Api.jsx](src/Api.jsx) use this Vercel-based proxy layer before reaching third-party providers. Public National Weather Service requests are made directly from the client since no secret keys are involved.
+All requests from [src/Api.jsx](src/Api.jsx) use this Vercel-based proxy layer before reaching third-party providers. National Weather Service requests don't need a key, but are proxied so successful responses can be cached on Vercel's CDN (30 minutes, set in [api/_utils.js](api/_utils.js)) and shared across visitors.
 
 - Resort info courtesy of the SnoCountry API: https://feeds.snocountry.net/
 - US resort weather from National Weather Service: https://api.weather.gov

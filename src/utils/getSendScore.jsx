@@ -56,7 +56,7 @@ export default function getSendScore(data) {
   } else if (status === "1") {
     // snowing today
     if (forecastWeather && (powFlags.some(flag => forecastWeatherLower === flag) && forecastSnow >= 90)) {
-      return 'pow';
+      return 'great';
     // some stash, probably snowing today
     } else if (freshies + stash >= 3 || (powFlags.some(flag => forecastWeatherLower === flag) && forecastSnow >= 75)) {
       return 'good';
