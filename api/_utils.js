@@ -63,9 +63,12 @@ export const getServerEnv = (name, res) => {
   return value;
 };
 
-// helper function to proxy a json request to an upstream api (ex SnoCountry, Geoapify, WeatherAPI)
-export const proxyJson = async (url, res) => {
-  const response = await fetch(url, { method: 'GET' });
+// cache successful upstream responses on the vercel cdn for 30 minutes
+const CACHE_CONTROL = 'public, s-maxage=1800, stale-while-revalidate=300';
+
+// helper function to proxy a json request to an upstream api (ex SnoCountry, Geoapify, WeatherAPI, NWS)
+export const proxyJson = async (url, res, headers = {}) => {
+  const response = await fetch(url, { method: 'GET', headers });
   const text = await response.text();
 
   if (!response.ok) {
@@ -73,5 +76,6 @@ export const proxyJson = async (url, res) => {
     return;
   }
 
+  res.setHeader('Cache-Control', CACHE_CONTROL);
   res.status(200).json(JSON.parse(text));
 };

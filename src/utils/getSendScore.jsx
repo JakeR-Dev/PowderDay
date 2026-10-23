@@ -1,5 +1,13 @@
-// helper to get 'send score'
-export default function getSendScore(status, freshies, stash, surface, forecastWeather, forecastSnow) {
+import getForecastVerbiage from './getForecastVerbiage'
+
+// helper to get 'send score' from resort data
+export default function getSendScore(data) {
+  const status = data?.resortStatus || "7";
+  const freshies = data?.freshies;
+  const stash = data?.snowLast48Hours;
+  const surface = data?.primarySurfaceCondition || 'N/A';
+  const forecastWeather = getForecastVerbiage(data?.forecastWeather);
+  const forecastSnow = data?.forecastSnow !== undefined ? Math.round(data?.forecastSnow) : null;
   const forecastWeatherLower = forecastWeather ? forecastWeather.toLowerCase() : '';
   const powFlags = ['snow', 'snow showers', 'heavy snow likely', 'heavy snow'];
  
@@ -48,7 +56,7 @@ export default function getSendScore(status, freshies, stash, surface, forecastW
   } else if (status === "1") {
     // snowing today
     if (forecastWeather && (powFlags.some(flag => forecastWeatherLower === flag) && forecastSnow >= 90)) {
-      return 'pow';
+      return 'great';
     // some stash, probably snowing today
     } else if (freshies + stash >= 3 || (powFlags.some(flag => forecastWeatherLower === flag) && forecastSnow >= 75)) {
       return 'good';

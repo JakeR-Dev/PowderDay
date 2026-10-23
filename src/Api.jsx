@@ -58,7 +58,7 @@ export async function listAllResorts() {
   }
 }
 
-// get single resort snow report
+// get resort snow report, accepts a single id or comma-separated ids (snocountry returns max 3 per call)
 export async function getResortSnowReport(resortId) {
   const url = buildApiUrl('/api/snow-report', {
     ids: resortId,
@@ -105,19 +105,15 @@ export async function getForecastURL(resortName, resortState) {
   const coordinates = await getResortCoordinates(resortName, resortState);
   if (!coordinates) return null;
 
-  const gridPointURL = 'https://api.weather.gov/points/' + encodeURIComponent(coordinates);
-  const options = {
-    Accept: "application/geo+json",
-    "User-Agent": "Powder Day (jryan6492@gmail.com)",
-  }
+  const gridPointURL = buildApiUrl('/api/weather-us', {
+    path: 'points/' + coordinates,
+  });
 
   try {
     // translate the lat/lon coordinates into a grid point using national weather service api
-    const gridPoints = await fetch(gridPointURL, options);
-    if (!gridPoints) return null;
+    const gridData = await fetchJson(gridPointURL);
 
     // get the forecast url from the grid point data
-    const gridData = await gridPoints.json();
     const forecastURL = gridData?.properties?.forecast;
     if (forecastURL) return forecastURL;
 
@@ -133,18 +129,17 @@ export async function getResortWeather(resortName, resortState) {
   const forecastURL = await getForecastURL(resortName, resortState);
   if (!forecastURL) return null;
 
-  const options = {
-    Accept: "application/geo+json",
-    "User-Agent": "Powder Day (jryan6492@gmail.com)",
-  }
+  // proxy through vercel so forecasts are cached across visitors
+  const url = buildApiUrl('/api/weather-us', {
+    path: forecastURL.replace('https://api.weather.gov/', ''),
+  });
 
   try {
     // get the forecast
-    const forecastData = await fetch(forecastURL, options);
-    const forecast = await forecastData.json();
-    return (forecast);
+    return await fetchJson(url);
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
