@@ -60,7 +60,7 @@ export const TopResorts = ({ favorites, onToggleFavorite }) => {
 
   return (
     <div className="top-resorts">
-      <h4>Top Resorts</h4>
+      <h4>Top Picks</h4>
 
       {/* show pow resorts as they're found */}
       {powResorts.length > 0 && (
@@ -76,9 +76,9 @@ export const TopResorts = ({ favorites, onToggleFavorite }) => {
       )}
 
       {searching ? (
-        <p className="color-gray">Searching for pow...</p>
+        <p className="color-gray">Searching for freshies...</p>
       ) : powResorts.length === 0 && (
-        <p className="color-gray">No pow today, check back after the next storm.</p>
+        <p className="color-gray">No freshies today, dust off the mountain bike.</p>
       )}
     </div>
   )

@@ -3,6 +3,7 @@ import Resort from '../Resort/Resort'
 import getResortInfo, { getResortForecast } from '../../utils/getResortInfo'
 import { useFavorites } from '../../hooks/useFavorites'
 import './SearchResults.scss'
+import { Favorites } from '../Favorites/Favorites'
 import { TopResorts } from '../TopResorts/TopResorts'
 
 export const SearchResults = ({ loading, setLoading, results, hasSearched, setHasSearched }) => {
@@ -132,34 +133,16 @@ export const SearchResults = ({ loading, setLoading, results, hasSearched, setHa
           <div className="loader-two" aria-hidden></div>
         </div>
 
-      // TODO:
-      // make favorites persistent, always shows regardless of whether user has them saved or not. also, add a subtitle saying something like "no favorites saved, click a resort's star icon to keep an eye on it here."
-
       // if no results after search
       ) : (results.length === 0 || !results.items || results.items.length === 0) && hasSearched ? (
         <p>No results found, try something else.</p>
 
       // if haven't searched yet, show favorites and top resorts
-      ) : (results.length === 0 && favorites.length) ? (
+      ) : (results.length === 0) ? (
         <>
-          <h4>Favorites</h4>
-          <ul>
-            {favorites.map((resort) => {
-              const data = favoriteResortsData[resort];
-              const favoriteClass = "is-favorite";
-
-              return (
-                <Resort key={resort} resortID={resort} data={data} favoriteClass={favoriteClass} onToggleFavorite={toggleFavorite} />
-              );
-            })}
-          </ul>
-
+          <Favorites favorites={favorites} toggleFavorite={toggleFavorite} favoriteResortsData={favoriteResortsData} />
           <TopResorts favorites={favorites} onToggleFavorite={toggleFavorite} />
         </>
-
-      // if haven't searched yet, but there are no favorites, show top resorts
-      ) : (results.length === 0) ? (
-        <TopResorts favorites={favorites} onToggleFavorite={toggleFavorite} />
 
       // otherwise, show results
       ) : (
